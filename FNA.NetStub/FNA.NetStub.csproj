@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+		<TargetFramework>net9.0</TargetFramework>
+	</PropertyGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\FNA\FNA.Core.csproj" />
+	</ItemGroup>
+</Project>

@@ -102,6 +102,6 @@ public struct CGPoint
 
 	public override string ToString()
 	{
-		return ((object)(Vector2)(ref mVector)).ToString();
+		return mVector.ToString();
 	}
 }

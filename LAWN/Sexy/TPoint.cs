@@ -113,7 +113,7 @@ public struct TPoint
 
 	public override int GetHashCode()
 	{
-		return ((object)(Point)(ref mPoint)).GetHashCode();
+		return mPoint.GetHashCode();
 	}
 
 	public static TPoint operator +(TPoint a, TPoint b)
@@ -162,6 +162,6 @@ public struct TPoint
 
 	public override string ToString()
 	{
-		return ((object)(Point)(ref mPoint)).ToString();
+		return mPoint.ToString();
 	}
 }

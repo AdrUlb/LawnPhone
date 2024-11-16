@@ -4,16 +4,17 @@ using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Threading;
-using Microsoft.Devices;
+//using Microsoft.Devices;
 using Microsoft.Phone.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.GamerServices;
+using Microsoft.Xna.Framework.Media;
 using Sexy.TodLib;
 
 namespace Sexy;
 
-internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListener, IDisposable
+internal abstract class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListener, IDisposable
 {
 	private const double VIBRATION_DURATION = 500.0;
 
@@ -103,7 +104,8 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 
 	private static Random rand = new Random(DateTime.UtcNow.Millisecond);
 
-	public static MediaPlayerLauncher VideoPlayer = new MediaPlayerLauncher();
+	//public static MediaPlayerLauncher VideoPlayer = new MediaPlayerLauncher();
+	public static VideoPlayer VideoPlayer = new();
 
 	protected bool wantToShowUpdateMessage;
 
@@ -127,13 +129,9 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 
 	public static bool IsInTrialMode => Main.IsInTrialMode;
 
-	public virtual void GotoInterfaceState(int state)
-	{
-	}
+	public virtual void GotoInterfaceState(int state) { }
 
-	internal virtual void NewGame()
-	{
-	}
+	internal virtual void NewGame() { }
 
 	public virtual void PlaySample(int theSoundNum)
 	{
@@ -151,6 +149,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		{
 			return null;
 		}
+
 		SoundInstance soundInstance = mSoundManager.GetSoundInstance((uint)theSoundNum);
 		if (soundInstance != null)
 		{
@@ -158,8 +157,10 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 			{
 				soundInstance.SetPan(thePan);
 			}
+
 			soundInstance.Play(looping);
 		}
+
 		return soundInstance;
 	}
 
@@ -247,8 +248,10 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 				{
 					return false;
 				}
+
 				return true;
 			}
+
 			return true;
 		}
 		catch (Exception ex)
@@ -288,6 +291,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		{
 			return mIntProperties[theId];
 		}
+
 		return theDefault;
 	}
 
@@ -309,13 +313,9 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		InitHook();
 	}
 
-	public virtual void InitHook()
-	{
-	}
+	public virtual void InitHook() { }
 
-	public virtual void SaveGame()
-	{
-	}
+	public virtual void SaveGame() { }
 
 	public void StartLoadingThread()
 	{
@@ -334,13 +334,9 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		mLoadingThreadCompleted = true;
 	}
 
-	public virtual void LoadingThreadProc()
-	{
-	}
+	public virtual void LoadingThreadProc() { }
 
-	public virtual void LoadingThreadCompleted()
-	{
-	}
+	public virtual void LoadingThreadCompleted() { }
 
 	public bool FileExists(string filename)
 	{
@@ -367,6 +363,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		{
 			FirstRun = false;
 		}
+
 		DoUpdateFrames();
 		return true;
 	}
@@ -376,9 +373,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		return true;
 	}
 
-	public virtual void AppEnteredBackground()
-	{
-	}
+	public virtual void AppEnteredBackground() { }
 
 	public virtual bool DoUpdateFrames()
 	{
@@ -388,13 +383,12 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 			mLoaded = true;
 			LoadingThreadCompleted();
 		}
+
 		UpdateFrames();
 		return true;
 	}
 
-	protected virtual void ShowUpdateMessage()
-	{
-	}
+	protected virtual void ShowUpdateMessage() { }
 
 	public virtual void UpdateFrames()
 	{
@@ -402,6 +396,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		{
 			ShowUpdateMessage();
 		}
+
 		mWidgetManager.UpdateFrame();
 	}
 
@@ -412,9 +407,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		GlobalStaticVars.g.EndFrame();
 	}
 
-	public void DeviceOrientationChanged(UI_ORIENTATION toOrientation)
-	{
-	}
+	public void DeviceOrientationChanged(UI_ORIENTATION toOrientation) { }
 
 	public virtual void InterfaceOrientationChanged(UI_ORIENTATION toOrientation)
 	{
@@ -435,12 +428,11 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		{
 			return orientation == UI_ORIENTATION.UI_ORIENTATION_LANDSCAPE_RIGHT;
 		}
+
 		return true;
 	}
 
-	public void AccelerometerDidAccelerate(double timestamp, double ax, double ay, double az)
-	{
-	}
+	public void AccelerometerDidAccelerate(double timestamp, double ax, double ay, double az) { }
 
 	internal bool Is3DAccelerated()
 	{
@@ -473,13 +465,9 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		mMusicEnabled = enable;
 	}
 
-	public virtual void ModalOpen()
-	{
-	}
+	public virtual void ModalOpen() { }
 
-	public virtual void ModalClose()
-	{
-	}
+	public virtual void ModalClose() { }
 
 	public void SafeDeleteWidget(Widget theWidget)
 	{
@@ -497,27 +485,27 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 			{
 				mWidgetManager.RemoveWidget(dialog);
 			}
+
 			if (dialog.IsModal())
 			{
 				ModalClose();
 				mWidgetManager.RemoveBaseModal(dialog);
 			}
+
 			if (deleteWidget)
 			{
 				SafeDeleteWidget(dialog);
 			}
+
 			return true;
 		}
+
 		return false;
 	}
 
-	public virtual void ShowResourceError(bool boolean)
-	{
-	}
+	public virtual void ShowResourceError(bool boolean) { }
 
-	public virtual void ShowAchievementMessage(TrialAchievementAlert alert)
-	{
-	}
+	public virtual void ShowAchievementMessage(TrialAchievementAlert alert) { }
 
 	public virtual void Start()
 	{
@@ -550,6 +538,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 			int num = mWidth / 2;
 			theDialog.Resize((mWidth - num) / 2, mHeight / 5, num, theDialog.GetPreferredHeight(num));
 		}
+
 		mDialogMap.Add(theDialogId, theDialog);
 		mDialogList.AddLast(theDialog);
 		mWidgetManager.AddWidget(theDialog);
@@ -586,6 +575,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 				return item.Value;
 			}
 		}
+
 		return null;
 	}
 
@@ -612,6 +602,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		{
 			return mStringProperties[theId];
 		}
+
 		return "";
 	}
 
@@ -621,10 +612,12 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		{
 			return 1.0;
 		}
+
 		if (!mLoadingThreadStarted)
 		{
 			return 0.0;
 		}
+
 		return ((double)mResourceManager.mLoadedCount + (double)ReanimatorXnaHelpers.mLoadedResources) / (double)(mResourceManager.mTotalResources + ReanimatorXnaHelpers.mTotalResources);
 	}
 
@@ -633,9 +626,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		return new SexyColor(h, s, l);
 	}
 
-	public virtual void LeftTrialMode()
-	{
-	}
+	public virtual void LeftTrialMode() { }
 
 	public bool WriteBufferToFile(string theFileName, Buffer theBuffer)
 	{
@@ -647,6 +638,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 			{
 				isolatedStorageFile.CreateDirectory(directoryName);
 			}
+
 			using IsolatedStorageFileStream isolatedStorageFileStream = new IsolatedStorageFileStream(theFileName, FileMode.OpenOrCreate, isolatedStorageFile);
 			isolatedStorageFileStream.Write(theBuffer.Data, 0, theBuffer.Data.Length);
 			isolatedStorageFileStream.Close();
@@ -656,6 +648,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 			_ = ex.Message;
 			return false;
 		}
+
 		return true;
 	}
 
@@ -668,6 +661,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 			{
 				return false;
 			}
+
 			using IsolatedStorageFileStream isolatedStorageFileStream = isolatedStorageFile.OpenFile(theFileName, FileMode.OpenOrCreate);
 			byte[] array = new byte[isolatedStorageFileStream.Length];
 			isolatedStorageFileStream.Read(array, 0, (int)isolatedStorageFileStream.Length);
@@ -679,12 +673,11 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 			_ = ex.Message;
 			return false;
 		}
+
 		return true;
 	}
 
-	private void TransformTouch(_Touch touch)
-	{
-	}
+	private void TransformTouch(_Touch touch) { }
 
 	public void TouchBegan(_Touch touch)
 	{
@@ -706,17 +699,11 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		mWidgetManager.TouchesCanceled();
 	}
 
-	public void ShakeBegan(double timestamp)
-	{
-	}
+	public void ShakeBegan(double timestamp) { }
 
-	public void ShakeEnded(double timestamp)
-	{
-	}
+	public void ShakeEnded(double timestamp) { }
 
-	public void ShakeCancelled(double timestamp)
-	{
-	}
+	public void ShakeCancelled(double timestamp) { }
 
 	public virtual void BuyGame()
 	{
@@ -733,12 +720,12 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 	{
 		switch (theButtonId)
 		{
-		case 1000:
-			ButtonPress(2000 + theDialogId);
-			break;
-		case 1001:
-			ButtonPress(3000 + theDialogId);
-			break;
+			case 1000:
+				ButtonPress(2000 + theDialogId);
+				break;
+			case 1001:
+				ButtonPress(3000 + theDialogId);
+				break;
 		}
 	}
 
@@ -746,54 +733,34 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 	{
 		switch (theButtonId)
 		{
-		case 1000:
-			ButtonDepress(2000 + theDialogId);
-			break;
-		case 1001:
-			ButtonDepress(3000 + theDialogId);
-			break;
+			case 1000:
+				ButtonDepress(2000 + theDialogId);
+				break;
+			case 1001:
+				ButtonDepress(3000 + theDialogId);
+				break;
 		}
 	}
 
-	public virtual void ButtonPress(int theId)
-	{
-	}
+	public virtual void ButtonPress(int theId) { }
 
-	public virtual void ButtonPress(int theId, int theClickCount)
-	{
-	}
+	public virtual void ButtonPress(int theId, int theClickCount) { }
 
-	public virtual void ButtonDepress(int theId)
-	{
-	}
+	public virtual void ButtonDepress(int theId) { }
 
-	public void ButtonDownTick(int theId)
-	{
-	}
+	public void ButtonDownTick(int theId) { }
 
-	public void ButtonMouseEnter(int theId)
-	{
-	}
+	public void ButtonMouseEnter(int theId) { }
 
-	public void ButtonMouseLeave(int theId)
-	{
-	}
+	public void ButtonMouseLeave(int theId) { }
 
-	public void ButtonMouseMove(int theId, int theX, int theY)
-	{
-	}
+	public void ButtonMouseMove(int theId, int theX, int theY) { }
 
-	public virtual void GotFocus()
-	{
-	}
+	public virtual void GotFocus() { }
 
-	public virtual void LostFocus()
-	{
-	}
+	public virtual void LostFocus() { }
 
-	public virtual void Tombstoned()
-	{
-	}
+	public virtual void Tombstoned() { }
 
 	public UI_ORIENTATION GetOrientation()
 	{
@@ -805,9 +772,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		return !mIsOrientationLocked;
 	}
 
-	public virtual void WriteToRegistry()
-	{
-	}
+	public virtual void WriteToRegistry() { }
 
 	public bool RegistryWriteString(string theValueName, string theString)
 	{
@@ -819,14 +784,12 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		return 0;
 	}
 
-	public void RegistryWriteInteger(string theValueName, int theValue)
-	{
-	}
+	public void RegistryWriteInteger(string theValueName, int theValue) { }
 
 	public void DoVibration()
 	{
-		VibrateController @default = VibrateController.Default;
-		@default.Start(TimeSpan.FromMilliseconds(500.0));
+		// TODO/FIXME: Vibration??
+		//VibrateController.Default.Start(TimeSpan.FromMilliseconds(500.0));
 	}
 
 	public virtual void Shutdown()
@@ -848,6 +811,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		{
 			GraphicsState.mGraphicsDeviceManager.SupportedOrientations = Constants.SupportedOrientations;
 		}
+
 		if ((int)((Game)XnaGame).Window.CurrentOrientation == 4)
 		{
 			GraphicsState.mGraphicsDeviceManager.PreferredBackBufferWidth = Constants.BackBufferSize.X;
@@ -858,20 +822,15 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 			GraphicsState.mGraphicsDeviceManager.PreferredBackBufferWidth = Constants.BackBufferSize.Y;
 			GraphicsState.mGraphicsDeviceManager.PreferredBackBufferHeight = Constants.BackBufferSize.X;
 		}
+
 		GraphicsState.mGraphicsDeviceManager.ApplyChanges();
 	}
 
-	protected void ProcessSafeDeleteList()
-	{
-	}
+	protected void ProcessSafeDeleteList() { }
 
-	public virtual void MoviePlayerContentPreloadDidFinish(bool succeeded)
-	{
-	}
+	public virtual void MoviePlayerContentPreloadDidFinish(bool succeeded) { }
 
-	public virtual void MoviePlayerPlaybackDidFinish()
-	{
-	}
+	public virtual void MoviePlayerPlaybackDidFinish() { }
 
 	public bool PlayMovie(VideoType video, MOVIESCALINGMODE mOVIESCALINGMODE, MOVIECONTROLMODE mOVIECONTROLMODE, SexyColor sexyColor)
 	{
@@ -880,10 +839,11 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		{
 			if (video == VideoType.Credits)
 			{
-				VideoPlayer.Media = new Uri("Content/video/credits.wmv", UriKind.Relative);
+				/*VideoPlayer.Media = new Uri("Content/video/credits.wmv", UriKind.Relative);
 				VideoPlayer.Location = (MediaLocationType)1;
 				VideoPlayer.Controls = (MediaPlaybackControls)31;
-				VideoPlayer.Show();
+				VideoPlayer.Show();*/
+				VideoPlayer.Play(Video.FromUriEXT(new Uri("Content/video/credits.wmv", UriKind.Relative), GlobalStaticVars.g.GraphicsDevice));
 			}
 		}
 		catch (Exception ex)
@@ -892,6 +852,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 			flag = false;
 			GotFocus();
 		}
+
 		MoviePlayerContentPreloadDidFinish(flag);
 		return flag;
 	}
@@ -902,6 +863,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		{
 			return mInterfaceOrientation == UI_ORIENTATION.UI_ORIENTATION_LANDSCAPE_RIGHT;
 		}
+
 		return true;
 	}
 
@@ -916,6 +878,7 @@ internal class SexyAppBase : SexyAppBaseInterface, ButtonListener, DialogListene
 		{
 			WantsToExit = true;
 		}
+
 		return mWidgetManager.BackButtonPress();
 	}
 

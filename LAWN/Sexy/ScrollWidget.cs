@@ -661,8 +661,8 @@ internal class ScrollWidget : Widget, ProxyWidgetListener
 	{
 		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
 		Color color = default(Color);
-		((Color)(ref color))._002Ector(255, 255, 255, (int)(255f * mIndicatorsOpacity));
-		if (((Color)(ref color)).A != 0)
+		color = new(255, 255, 255, (int)(255f * mIndicatorsOpacity));
+		if (color.A != 0)
 		{
 			int width = mIndicatorsImage.GetWidth();
 			int height = mIndicatorsImage.GetHeight();

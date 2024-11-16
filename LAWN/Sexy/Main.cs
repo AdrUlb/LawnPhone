@@ -64,12 +64,10 @@ public class Main : Game
 
 	public Main()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
 		SetupTileSchedule();
-		graphics = Graphics.GetNew((Game)(object)this);
+		graphics = Graphics.GetNew(this);
 		SetLowMem();
-		graphics.IsFullScreen = true;
+		graphics.IsFullScreen = false;
 		Guide.SimulateTrialMode = false;
 		graphics.PreferredBackBufferWidth = 800;
 		graphics.PreferredBackBufferHeight = 480;
@@ -77,9 +75,9 @@ public class Main : Game
 		GraphicsState.mGraphicsDeviceManager.DeviceCreated += graphics_DeviceCreated;
 		GraphicsState.mGraphicsDeviceManager.DeviceReset += graphics_DeviceReset;
 		GraphicsState.mGraphicsDeviceManager.PreparingDeviceSettings += mGraphicsDeviceManager_PreparingDeviceSettings;
-		((Game)this).TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 30.0);
-		((Game)this).Exiting += Main_Exiting;
-		PhoneApplicationService.Current.UserIdleDetectionMode = (IdleDetectionMode)0;
+		TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 30.0);
+		Exiting += Main_Exiting;
+		PhoneApplicationService.Current.UserIdleDetectionMode = 0;
 		PhoneApplicationService.Current.Launching += Game_Launching;
 		PhoneApplicationService.Current.Activated += Game_Activated;
 		PhoneApplicationService.Current.Closing += Current_Closing;
@@ -129,12 +127,10 @@ public class Main : Game
 
 	protected override void Initialize()
 	{
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Expected O, but got Unknown
-		((Game)this).Window.OrientationChanged += Window_OrientationChanged;
+		Window.OrientationChanged += Window_OrientationChanged;
 		GamerServicesComp = new GamerServicesComponent((Game)(object)this);
 		ReportAchievement.Initialise();
-		((Game)this).Initialize();
+		base.Initialize();
 	}
 
 	protected override void LoadContent()
@@ -151,14 +147,9 @@ public class Main : Game
 		GlobalStaticVars.mGlobalContent.cleanUp();
 	}
 
-	protected override void BeginRun()
-	{
-		((Game)this).BeginRun();
-	}
-
 	public void CompensateForSlowUpdate()
 	{
-		((Game)this).ResetElapsedTime();
+		ResetElapsedTime();
 	}
 
 	protected override void Update(GameTime gameTime)
@@ -186,7 +177,7 @@ public class Main : Game
 		}
 		try
 		{
-			((Game)this).Update(gameTime);
+			base.Update(gameTime);
 		}
 		catch (GameUpdateRequiredException)
 		{
@@ -269,9 +260,9 @@ public class Main : Game
 		}
 		lock (ResourceManager.DrawLocker)
 		{
-			((Game)this).GraphicsDevice.Clear(Color.Black);
+			GraphicsDevice.Clear(Color.Black);
 			GlobalStaticVars.gSexyAppBase.DrawGame(gameTime);
-			((Game)this).Draw(gameTime);
+			base.Draw(gameTime);
 		}
 	}
 
@@ -310,50 +301,50 @@ public class Main : Game
 			return;
 		}
 		GamePadState state = GamePad.GetState((PlayerIndex)0);
-		GamePadButtons buttons = ((GamePadState)(ref state)).Buttons;
-		if ((int)((GamePadButtons)(ref buttons)).Back == 1)
+		GamePadButtons buttons = state.Buttons;
+		if (buttons.Back == ButtonState.Pressed)
 		{
-			GamePadButtons buttons2 = ((GamePadState)(ref previousGamepadState)).Buttons;
-			if ((int)((GamePadButtons)(ref buttons2)).Back == 0)
+			GamePadButtons buttons2 = previousGamepadState.Buttons;
+			if (buttons2.Back == ButtonState.Released)
 			{
 				GlobalStaticVars.gSexyAppBase.BackButtonPress();
 			}
 		}
 		TouchCollection state2 = TouchPanel.GetState();
 		bool flag = false;
-		Enumerator enumerator = ((TouchCollection)(ref state2)).GetEnumerator();
+		var enumerator = state2.GetEnumerator();
 		try
 		{
 			TouchLocation val = default(TouchLocation);
-			while (((Enumerator)(ref enumerator)).MoveNext())
+			while (enumerator.MoveNext())
 			{
-				TouchLocation current = ((Enumerator)(ref enumerator)).Current;
+				TouchLocation current = enumerator.Current;
 				_Touch touch = default(_Touch);
-				touch.location.mX = ((TouchLocation)(ref current)).Position.X;
-				touch.location.mY = ((TouchLocation)(ref current)).Position.Y;
-				if (((TouchLocation)(ref current)).TryGetPreviousLocation(ref val))
+				touch.location.mX = current.Position.X;
+				touch.location.mY = current.Position.Y;
+				if (current.TryGetPreviousLocation(out val))
 				{
-					touch.previousLocation = new CGPoint(((TouchLocation)(ref val)).Position.X, ((TouchLocation)(ref val)).Position.Y);
+					touch.previousLocation = new CGPoint(val.Position.X, val.Position.Y);
 				}
 				else
 				{
 					touch.previousLocation = touch.location;
 				}
 				touch.timestamp = gameTime.TotalGameTime.TotalSeconds;
-				if ((int)((TouchLocation)(ref current)).State == 2 && !flag)
+				if (current.State == TouchLocationState.Pressed && !flag)
 				{
 					GlobalStaticVars.gSexyAppBase.TouchBegan(touch);
 					flag = true;
 				}
-				else if ((int)((TouchLocation)(ref current)).State == 3)
+				else if (current.State == TouchLocationState.Moved)
 				{
 					GlobalStaticVars.gSexyAppBase.TouchMoved(touch);
 				}
-				else if ((int)((TouchLocation)(ref current)).State == 1)
+				else if (current.State == TouchLocationState.Released)
 				{
 					GlobalStaticVars.gSexyAppBase.TouchEnded(touch);
 				}
-				else if ((int)((TouchLocation)(ref current)).State == 0)
+				else if (current.State == TouchLocationState.Invalid)
 				{
 					GlobalStaticVars.gSexyAppBase.TouchesCanceled();
 				}
@@ -361,7 +352,7 @@ public class Main : Game
 		}
 		finally
 		{
-			((IDisposable)(Enumerator)(ref enumerator)).Dispose();
+			enumerator.Dispose();
 		}
 		previousGamepadState = state;
 	}
@@ -377,7 +368,7 @@ public class Main : Game
 				GlobalStaticVars.gSexyAppBase.mMusicInterface.ResumeMusic();
 			}
 		}
-		((Game)this).OnActivated(sender, args);
+		base.OnActivated(sender, args);
 	}
 
 	protected override void OnDeactivated(object sender, EventArgs args)
@@ -388,7 +379,7 @@ public class Main : Game
 			GlobalStaticVars.gSexyAppBase.mMusicInterface.PauseMusic();
 		}
 		GlobalStaticVars.gSexyAppBase.AppEnteredBackground();
-		((Game)this).OnDeactivated(sender, args);
+		base.OnDeactivated(sender, args);
 	}
 
 	private void GameSpecificCheatInputCheck()

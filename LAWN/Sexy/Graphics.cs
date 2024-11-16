@@ -237,10 +237,6 @@ internal class Graphics : GraphicsState
 
 	public new void Init()
 	{
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Expected O, but got Unknown
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Expected O, but got Unknown
 		gSpriteBatch = new SpriteBatch(GraphicsState.mGraphicsDeviceManager.GraphicsDevice);
 		gPrimitiveBatch = new PrimitiveBatch(GraphicsState.mGraphicsDeviceManager.GraphicsDevice);
 		spriteBatch = gSpriteBatch;
@@ -403,11 +399,7 @@ internal class Graphics : GraphicsState
 
 	public static void PremultiplyColour(ref Color c)
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		float num = (float)(int)((Color)(ref c)).A / 255f;
-		c *= num;
+		c *= c.A / 255.0f;
 	}
 
 	public static void PremultiplyColour(ref SexyColor c)
@@ -436,7 +428,7 @@ internal class Graphics : GraphicsState
 		}
 		else
 		{
-			((Color)(ref theColor)).A = 0;
+			theColor.A = 0;
 		}
 		base.mColor = theColor;
 	}
@@ -554,7 +546,7 @@ internal class Graphics : GraphicsState
 		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 		Color val = base.mColor;
-		if (((Color)(ref val)).A != 0)
+		if (val.A != 0)
 		{
 			FillRect(theX, theY, theWidth + 1, 1);
 			FillRect(theX, theY + theHeight, theWidth + 1, 1);
@@ -637,7 +629,7 @@ internal class Graphics : GraphicsState
 		Vector2 vertex = default(Vector2);
 		for (int i = 0; i < theNumVertices; i++)
 		{
-			((Vector2)(ref vertex))._002Ector((float)(theVertexList[i].mX + mTransX), (float)(theVertexList[i].mY + mTransY));
+			vertex = new((float)(theVertexList[i].mX + mTransX), (float)(theVertexList[i].mY + mTransY));
 			primitiveBatch.AddVertex(vertex, base.mColor);
 		}
 	}
@@ -649,7 +641,7 @@ internal class Graphics : GraphicsState
 		destination.mWidth = (int)((float)destination.mWidth * mScaleX);
 		destination.mHeight = (int)((float)destination.mHeight * mScaleY);
 		Vector2 val = default(Vector2);
-		((Vector2)(ref val))._002Ector((float)destination.mWidth / (float)((source.mWidth != 0) ? source.mWidth : destination.mWidth), (float)destination.mHeight / (float)((source.mHeight != 0) ? source.mHeight : destination.mHeight));
+		val = new((float)destination.mWidth / (float)((source.mWidth != 0) ? source.mWidth : destination.mWidth), (float)destination.mHeight / (float)((source.mHeight != 0) ? source.mHeight : destination.mHeight));
 		if (val.X == 0f)
 		{
 			val.X = 1f;
@@ -764,7 +756,7 @@ internal class Graphics : GraphicsState
 		Vector2 center2 = (Vector2)(center ? new Vector2((float)theSrcRect.mWidth * 0.5f, (float)theSrcRect.mHeight * 0.5f) : Vector2.Zero);
 		if (add)
 		{
-			((Color)(ref theColor)).A = 0;
+			theColor.A = 0;
 		}
 		primitiveBatch.Draw(theImage, destination, theSrcRect, ref theTransform, center2, theColor, extraOffset: false, sourceOffsetsUsed: true);
 	}
@@ -1202,7 +1194,7 @@ internal class Graphics : GraphicsState
 		theRect.mX += mTransX;
 		theRect.mY += mTransY;
 		Vector2 val = default(Vector2);
-		((Vector2)(ref val))._002Ector((float)theRect.mX, (float)theRect.mY);
+		val = new((float)theRect.mX, (float)theRect.mY);
 		mFont.GetHeight();
 		if (centerVertically)
 		{
@@ -1253,7 +1245,7 @@ internal class Graphics : GraphicsState
 		theRect.mX += mTransX;
 		theRect.mY += mTransY;
 		Vector2 val = default(Vector2);
-		((Vector2)(ref val))._002Ector((float)theRect.mX, (float)theRect.mY);
+		val = new((float)theRect.mX, (float)theRect.mY);
 		mFont.GetHeight();
 		if (centerVertically)
 		{
@@ -1354,9 +1346,9 @@ internal class Graphics : GraphicsState
 		mWriteColoredString = false;
 		mLinearBlend = false;
 		Viewport viewport = GraphicsDevice.Viewport;
-		int width = ((Viewport)(ref viewport)).Width;
+		int width = viewport.Width;
 		Viewport viewport2 = GraphicsDevice.Viewport;
-		mClipRect = new TRect(0, 0, width, ((Viewport)(ref viewport2)).Height);
+		mClipRect = new TRect(0, 0, width, viewport2.Height);
 		ClearClipRect();
 		base.mColor = Color.White;
 		mDrawMode = currentlyActiveDrawMode;

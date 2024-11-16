@@ -92,18 +92,6 @@ internal class ResourceManager : IDisposable
 
 	public ResourceManager(SexyAppBase theApp)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Expected O, but got Unknown
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Expected O, but got Unknown
-		//IL_0127: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012d: Expected O, but got Unknown
-		//IL_0161: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016b: Expected O, but got Unknown
-		//IL_018f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0199: Expected O, but got Unknown
-		//IL_01be: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c8: Expected O, but got Unknown
 		BlendState val = new BlendState();
 		val.ColorWriteChannels = (ColorWriteChannels)8;
 		val.AlphaDestinationBlend = (Blend)1;
@@ -120,7 +108,6 @@ internal class ResourceManager : IDisposable
 		blendColorLoadState = val2;
 		loadedBackdrop = -1;
 		unloadableResources = new List<BaseRes>();
-		base._002Ector();
 		mApp = theApp;
 		mHasFailed = false;
 		mXMLParser = null;
@@ -141,6 +128,7 @@ internal class ResourceManager : IDisposable
 			mUnloadContentManager[i] = new ContentManager((IServiceProvider)((Game)SexyAppBase.XnaGame).Services);
 			mUnloadContentManager[i].RootDirectory = mApp.mContentManager.RootDirectory;
 		}
+
 		mReanimContentManager = new ContentManager((IServiceProvider)((Game)SexyAppBase.XnaGame).Services);
 		mReanimContentManager.RootDirectory = mApp.mContentManager.RootDirectory;
 		mParticleContentManager = new ContentManager((IServiceProvider)((Game)SexyAppBase.XnaGame).Services);
@@ -166,6 +154,7 @@ internal class ResourceManager : IDisposable
 		{
 			return mContentManager;
 		}
+
 		return mUnloadContentManager[res.mUnloadGroup];
 	}
 
@@ -180,9 +169,7 @@ internal class ResourceManager : IDisposable
 		GC.SuppressFinalize(this);
 	}
 
-	protected virtual void Dispose(bool disposing)
-	{
-	}
+	protected virtual void Dispose(bool disposing) { }
 
 	public bool HadError()
 	{
@@ -229,6 +216,7 @@ internal class ResourceManager : IDisposable
 		{
 			Fail("Resource file not found: " + theFilename);
 		}
+
 		XMLElement theElement = new XMLElement();
 		while (!mXMLParser.HasFailed())
 		{
@@ -236,15 +224,18 @@ internal class ResourceManager : IDisposable
 			{
 				Fail(mXMLParser.GetErrorText());
 			}
+
 			if (theElement.mType == XMLElementType.TYPE_START)
 			{
 				if (theElement.mValue != "ResourceManifest")
 				{
 					break;
 				}
+
 				return DoParseResources();
 			}
 		}
+
 		Fail("Expecting ResourceManifest tag");
 		return DoParseResources();
 	}
@@ -260,6 +251,7 @@ internal class ResourceManager : IDisposable
 				{
 					break;
 				}
+
 				if (theElement.mType == XMLElementType.TYPE_START)
 				{
 					if (!(theElement.mValue == "Resources"))
@@ -267,6 +259,7 @@ internal class ResourceManager : IDisposable
 						Fail("Invalid Section '" + theElement.mValue + "'");
 						break;
 					}
+
 					mCurResGroup = theElement.mAttributes["id"];
 					mResGroupMap.Add(mCurResGroup, new List<BaseRes>());
 					mCurResGroupList = mResGroupMap[mCurResGroup];
@@ -275,6 +268,7 @@ internal class ResourceManager : IDisposable
 						Fail("No id specified.");
 						break;
 					}
+
 					if (!ParseResources())
 					{
 						break;
@@ -287,10 +281,12 @@ internal class ResourceManager : IDisposable
 				}
 			}
 		}
+
 		if (mXMLParser.HasFailed())
 		{
 			Fail(mXMLParser.GetErrorText());
 		}
+
 		mXMLParser = null;
 		return !mHasFailed;
 	}
@@ -305,6 +301,7 @@ internal class ResourceManager : IDisposable
 			{
 				return false;
 			}
+
 			if (theElement.mType == XMLElementType.TYPE_START)
 			{
 				if (theElement.mValue == "Image")
@@ -313,141 +310,176 @@ internal class ResourceManager : IDisposable
 					{
 						return false;
 					}
+
 					if (!mXMLParser.NextElement(ref theElement))
 					{
 						return false;
 					}
+
 					if (theElement.mType != XMLElementType.TYPE_END)
 					{
 						return Fail("Unexpected element found.");
 					}
+
 					continue;
 				}
+
 				if (theElement.mValue == "Reanim")
 				{
 					if (!ParseReanimResource(theElement))
 					{
 						return false;
 					}
+
 					if (!mXMLParser.NextElement(ref theElement))
 					{
 						return false;
 					}
+
 					if (theElement.mType != XMLElementType.TYPE_END)
 					{
 						return Fail("Unexpected element found.");
 					}
+
 					continue;
 				}
+
 				if (theElement.mValue == "Particle")
 				{
 					if (!ParseParticleResource(theElement))
 					{
 						return false;
 					}
+
 					if (!mXMLParser.NextElement(ref theElement))
 					{
 						return false;
 					}
+
 					if (theElement.mType != XMLElementType.TYPE_END)
 					{
 						return Fail("Unexpected element found.");
 					}
+
 					continue;
 				}
+
 				if (theElement.mValue == "Trail")
 				{
 					if (!ParseTrailResource(theElement))
 					{
 						return false;
 					}
+
 					if (!mXMLParser.NextElement(ref theElement))
 					{
 						return false;
 					}
+
 					if (theElement.mType != XMLElementType.TYPE_END)
 					{
 						return Fail("Unexpected element found.");
 					}
+
 					continue;
 				}
+
 				if (theElement.mValue == "Sound")
 				{
 					if (!ParseSoundResource(theElement))
 					{
 						return false;
 					}
+
 					if (!mXMLParser.NextElement(ref theElement))
 					{
 						return false;
 					}
+
 					if (theElement.mType != XMLElementType.TYPE_END)
 					{
 						return Fail("Unexpected element found.");
 					}
+
 					continue;
 				}
+
 				if (theElement.mValue == "Font")
 				{
 					if (!ParseFontResource(theElement))
 					{
 						return false;
 					}
+
 					if (!mXMLParser.NextElement(ref theElement))
 					{
 						return false;
 					}
+
 					if (theElement.mType != XMLElementType.TYPE_END)
 					{
 						return Fail("Unexpected element found.");
 					}
+
 					continue;
 				}
+
 				if (theElement.mValue == "Music")
 				{
 					if (!ParseMusicResource(theElement))
 					{
 						return false;
 					}
+
 					if (!mXMLParser.NextElement(ref theElement))
 					{
 						return false;
 					}
+
 					if (theElement.mType != XMLElementType.TYPE_END)
 					{
 						return Fail("Unexpected element found.");
 					}
+
 					continue;
 				}
+
 				if (theElement.mValue == "Level")
 				{
 					if (!ParseLevelResource(theElement))
 					{
 						return false;
 					}
+
 					if (!mXMLParser.NextElement(ref theElement))
 					{
 						return false;
 					}
+
 					if (theElement.mType != XMLElementType.TYPE_END)
 					{
 						return Fail("Unexpected element found.");
 					}
+
 					continue;
 				}
+
 				if (!(theElement.mValue == "SetDefaults"))
 				{
 					Fail("Invalid Section '" + theElement.mValue + "'");
 					return false;
 				}
+
 				if (!ParseSetDefaults(theElement))
 				{
 					return false;
 				}
+
 				if (!mXMLParser.NextElement(ref theElement))
 				{
 					return false;
 				}
+
 				if (theElement.mType != XMLElementType.TYPE_END)
 				{
 					return Fail("Unexpected element found.");
@@ -460,19 +492,19 @@ internal class ResourceManager : IDisposable
 					Fail("Element Not Expected '" + theElement.mValue + "'");
 					return false;
 				}
+
 				if (theElement.mType == XMLElementType.TYPE_END)
 				{
 					break;
 				}
 			}
 		}
+
 		return true;
 	}
 
 	private bool ParseCommonResource(XMLElement theElement, BaseRes theRes, Dictionary<string, BaseRes> theMap)
 	{
-		//IL_019a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019f: Unknown result type (might be due to invalid IL or missing references)
 		mHadAlreadyDefinedError = false;
 		string text = theElement.mAttributes["path"];
 		theRes.mXMLAttributes = theElement.mAttributes;
@@ -489,6 +521,7 @@ internal class ResourceManager : IDisposable
 		{
 			theRes.mPath = mDefaultPath + text;
 		}
+
 		Dictionary<string, string>.Enumerator enumerator = theElement.mAttributes.GetEnumerator();
 		string text2 = mDefaultIdPrefix;
 		while (enumerator.MoveNext())
@@ -498,6 +531,7 @@ internal class ResourceManager : IDisposable
 				text2 = mDefaultIdPrefix + enumerator.Current.Value;
 			}
 		}
+
 		theRes.mResGroup = mCurResGroup;
 		theRes.mId = text2;
 		enumerator = theElement.mAttributes.GetEnumerator();
@@ -509,10 +543,12 @@ internal class ResourceManager : IDisposable
 				text3 = enumerator.Current.Value;
 			}
 		}
+
 		if (!string.IsNullOrEmpty(text3))
 		{
 			theRes.mUnloadGroup = int.Parse(text3);
 		}
+
 		enumerator = theElement.mAttributes.GetEnumerator();
 		string value = null;
 		while (enumerator.MoveNext())
@@ -522,15 +558,18 @@ internal class ResourceManager : IDisposable
 				value = enumerator.Current.Value;
 			}
 		}
+
 		if (!string.IsNullOrEmpty(value))
 		{
 			((ImageRes)theRes).lowMemorySurfaceFormat = (SurfaceFormat)Enum.Parse(typeof(SurfaceFormat), value, ignoreCase: true);
 		}
+
 		if (theMap.ContainsKey(text2))
 		{
 			mHadAlreadyDefinedError = true;
 			return Fail("Resource already defined.");
 		}
+
 		theMap.Add(text2, theRes);
 		mCurResGroupList.Add(theRes);
 		return true;
@@ -545,11 +584,13 @@ internal class ResourceManager : IDisposable
 			{
 				mDefaultPath = GetResourceDir() + enumerator.Current.Value + "/";
 			}
+
 			if (enumerator.Current.Key == "idprefix")
 			{
 				mDefaultIdPrefix = enumerator.Current.Value;
 			}
 		}
+
 		return true;
 	}
 
@@ -563,6 +604,7 @@ internal class ResourceManager : IDisposable
 				fontRes.DeleteResource();
 				return false;
 			}
+
 			mError = "";
 			mHasFailed = false;
 			FontRes fontRes2 = fontRes;
@@ -571,6 +613,7 @@ internal class ResourceManager : IDisposable
 			fontRes.mXMLAttributes = fontRes2.mXMLAttributes;
 			fontRes2.DeleteResource();
 		}
+
 		fontRes.mFont = null;
 		Dictionary<string, string>.Enumerator enumerator = theElement.mAttributes.GetEnumerator();
 		while (enumerator.MoveNext())
@@ -579,11 +622,13 @@ internal class ResourceManager : IDisposable
 			{
 				fontRes.mTags = enumerator.Current.Value;
 			}
+
 			if (enumerator.Current.Key == "isDefault")
 			{
 				fontRes.mDefault = true;
 			}
 		}
+
 		if (fontRes.mPath.Substring(0, 5) == "!sys:")
 		{
 			fontRes.mSysFont = true;
@@ -617,6 +662,7 @@ internal class ResourceManager : IDisposable
 					fontRes.mBold = true;
 				}
 			}
+
 			if (fontRes.mSize <= 0)
 			{
 				return Fail("SysFont needs point size");
@@ -626,6 +672,7 @@ internal class ResourceManager : IDisposable
 		{
 			fontRes.mSysFont = false;
 		}
+
 		return true;
 	}
 
@@ -639,6 +686,7 @@ internal class ResourceManager : IDisposable
 				soundRes.DeleteResource();
 				return false;
 			}
+
 			mError = "";
 			mHasFailed = false;
 			SoundRes soundRes2 = soundRes;
@@ -647,6 +695,7 @@ internal class ResourceManager : IDisposable
 			soundRes.mXMLAttributes = soundRes2.mXMLAttributes;
 			soundRes2.DeleteResource();
 		}
+
 		soundRes.mSoundId = -1;
 		soundRes.mVolume = -1.0;
 		soundRes.mPanning = 0;
@@ -657,11 +706,13 @@ internal class ResourceManager : IDisposable
 			{
 				soundRes.mVolume = Convert.ToDouble(enumerator.Current.Value);
 			}
+
 			if (enumerator.Current.Key == "pan")
 			{
 				soundRes.mPanning = Convert.ToInt32(enumerator.Current.Value);
 			}
 		}
+
 		return true;
 	}
 
@@ -675,6 +726,7 @@ internal class ResourceManager : IDisposable
 				musicRes.DeleteResource();
 				return false;
 			}
+
 			mError = "";
 			mHasFailed = false;
 			MusicRes musicRes2 = musicRes;
@@ -683,6 +735,7 @@ internal class ResourceManager : IDisposable
 			musicRes.mXMLAttributes = musicRes2.mXMLAttributes;
 			musicRes2.DeleteResource();
 		}
+
 		musicRes.mSongId = -1;
 		return true;
 	}
@@ -697,6 +750,7 @@ internal class ResourceManager : IDisposable
 				reanimRes.DeleteResource();
 				return false;
 			}
+
 			mError = "";
 			mHasFailed = false;
 			ReanimRes reanimRes2 = reanimRes;
@@ -705,6 +759,7 @@ internal class ResourceManager : IDisposable
 			reanimRes.mXMLAttributes = reanimRes2.mXMLAttributes;
 			reanimRes2.DeleteResource();
 		}
+
 		return true;
 	}
 
@@ -718,6 +773,7 @@ internal class ResourceManager : IDisposable
 				particleRes.DeleteResource();
 				return false;
 			}
+
 			mError = "";
 			mHasFailed = false;
 			ParticleRes particleRes2 = particleRes;
@@ -726,6 +782,7 @@ internal class ResourceManager : IDisposable
 			particleRes.mXMLAttributes = particleRes2.mXMLAttributes;
 			particleRes2.DeleteResource();
 		}
+
 		return true;
 	}
 
@@ -739,6 +796,7 @@ internal class ResourceManager : IDisposable
 				trailRes.DeleteResource();
 				return false;
 			}
+
 			mError = "";
 			mHasFailed = false;
 			TrailRes trailRes2 = trailRes;
@@ -747,6 +805,7 @@ internal class ResourceManager : IDisposable
 			trailRes.mXMLAttributes = trailRes2.mXMLAttributes;
 			trailRes2.DeleteResource();
 		}
+
 		return true;
 	}
 
@@ -760,6 +819,7 @@ internal class ResourceManager : IDisposable
 				levelRes.DeleteResource();
 				return false;
 			}
+
 			mError = "";
 			mHasFailed = false;
 			LevelRes levelRes2 = levelRes;
@@ -768,6 +828,7 @@ internal class ResourceManager : IDisposable
 			levelRes.mXMLAttributes = levelRes2.mXMLAttributes;
 			levelRes2.DeleteResource();
 		}
+
 		levelRes.mLevelNumber = Convert.ToInt32(levelRes.mId);
 		return true;
 	}
@@ -782,6 +843,7 @@ internal class ResourceManager : IDisposable
 				imageRes.DeleteResource();
 				return false;
 			}
+
 			mError = "";
 			mHasFailed = false;
 			ImageRes imageRes2 = imageRes;
@@ -790,10 +852,14 @@ internal class ResourceManager : IDisposable
 			imageRes.mXMLAttributes = imageRes2.mXMLAttributes;
 			imageRes2.DeleteResource();
 		}
+
 		imageRes.mPalletize = !theElement.mAttributes.ContainsKey("nopal");
 		imageRes.mA4R4G4B4 = theElement.mAttributes.ContainsKey("a4r4g4b4");
 		imageRes.mDDSurface = theElement.mAttributes.ContainsKey("ddsurface");
-		imageRes.mPurgeBits = theElement.mAttributes.ContainsKey("nobits") || (mApp.Is3DAccelerated() && theElement.mAttributes.ContainsKey("nobits3d")) || (!mApp.Is3DAccelerated() && theElement.mAttributes.ContainsKey("nobits2d"));
+		imageRes.mPurgeBits = theElement.mAttributes.ContainsKey("nobits") ||
+							(mApp.Is3DAccelerated() && theElement.mAttributes.ContainsKey("nobits3d")) ||
+							(!mApp.Is3DAccelerated() && theElement.mAttributes.ContainsKey("nobits2d"));
+
 		imageRes.mA8R8G8B8 = theElement.mAttributes.ContainsKey("a8r8g8b8");
 		imageRes.mR5G6B5 = theElement.mAttributes.ContainsKey("r5g6b5");
 		imageRes.mA1R5G5B5 = theElement.mAttributes.ContainsKey("a1r5g5b5");
@@ -843,24 +909,25 @@ internal class ResourceManager : IDisposable
 			{
 				switch (enumerator.Current.Value)
 				{
-				case "none":
-					animType = AnimType.AnimType_None;
-					break;
-				case "once":
-					animType = AnimType.AnimType_Once;
-					break;
-				case "loop":
-					animType = AnimType.AnimType_Loop;
-					break;
-				case "pingpong":
-					animType = AnimType.AnimType_PingPong;
-					break;
-				default:
-					Fail("Invalid animation type.");
-					return false;
+					case "none":
+						animType = AnimType.AnimType_None;
+						break;
+					case "once":
+						animType = AnimType.AnimType_Once;
+						break;
+					case "loop":
+						animType = AnimType.AnimType_Loop;
+						break;
+					case "pingpong":
+						animType = AnimType.AnimType_PingPong;
+						break;
+					default:
+						Fail("Invalid animation type.");
+						return false;
 				}
 			}
 		}
+
 		imageRes.mAnimInfo.mAnimType = animType;
 		if (animType != 0)
 		{
@@ -891,8 +958,10 @@ internal class ResourceManager : IDisposable
 					ReadIntVector(enumerator.Current.Value, ref imageRes.mAnimInfo.mFrameMap);
 				}
 			}
+
 			imageRes.mAnimInfo.Compute(theNumCels, theBeginFrameTime, theEndFrameTime);
 		}
+
 		return true;
 	}
 
@@ -938,6 +1007,7 @@ internal class ResourceManager : IDisposable
 		{
 			unloadableResource.DeleteResource();
 		}
+
 		unloadableResources.Clear();
 	}
 
@@ -961,6 +1031,7 @@ internal class ResourceManager : IDisposable
 		{
 			return ((FontRes)mFontMap[theRes]).mFont;
 		}
+
 		return null;
 	}
 
@@ -970,6 +1041,7 @@ internal class ResourceManager : IDisposable
 		{
 			return ((ReanimRes)mReanimMap[theRes]).mReanim;
 		}
+
 		return null;
 	}
 
@@ -979,6 +1051,7 @@ internal class ResourceManager : IDisposable
 		{
 			return ((ParticleRes)mParticleMap[theRes]).mParticle;
 		}
+
 		return null;
 	}
 
@@ -988,6 +1061,7 @@ internal class ResourceManager : IDisposable
 		{
 			return ((TrailRes)mTrailMap[theRes]).mTrail;
 		}
+
 		return null;
 	}
 
@@ -997,6 +1071,7 @@ internal class ResourceManager : IDisposable
 		{
 			return ((ImageRes)mImageMap[theRes]).mImage;
 		}
+
 		return null;
 	}
 
@@ -1006,6 +1081,7 @@ internal class ResourceManager : IDisposable
 		{
 			return ((SoundRes)mSoundMap[theRes]).mSoundId;
 		}
+
 		return -1;
 	}
 
@@ -1015,6 +1091,7 @@ internal class ResourceManager : IDisposable
 		{
 			return ((MusicRes)mMusicMap[theRes]).mSongId;
 		}
+
 		return -1;
 	}
 
@@ -1024,6 +1101,7 @@ internal class ResourceManager : IDisposable
 		{
 			return theResMap.Count;
 		}
+
 		int num = 0;
 		Dictionary<string, BaseRes>.Enumerator enumerator = theResMap.GetEnumerator();
 		while (enumerator.MoveNext())
@@ -1034,6 +1112,7 @@ internal class ResourceManager : IDisposable
 				num++;
 			}
 		}
+
 		return num;
 	}
 
@@ -1043,6 +1122,7 @@ internal class ResourceManager : IDisposable
 		{
 			return theResMap.Count;
 		}
+
 		int num = 0;
 		Dictionary<string, BaseRes>.Enumerator enumerator = theResMap.GetEnumerator();
 		while (enumerator.MoveNext())
@@ -1053,6 +1133,7 @@ internal class ResourceManager : IDisposable
 				num++;
 			}
 		}
+
 		return num;
 	}
 
@@ -1136,14 +1217,13 @@ internal class ResourceManager : IDisposable
 		mError = "";
 		mHasFailed = false;
 		StartLoadResources(theResGroup);
-		while (LoadNextResource())
-		{
-		}
+		while (LoadNextResource()) { }
 		if (!HadError())
 		{
 			mLoadedGroups.Add(theResGroup);
 			return true;
 		}
+
 		return false;
 	}
 
@@ -1153,10 +1233,12 @@ internal class ResourceManager : IDisposable
 		{
 			return false;
 		}
+
 		if (mCurResGroupList == null)
 		{
 			return false;
 		}
+
 		bool flag = false;
 		bool flag2 = false;
 		BaseRes baseRes = null;
@@ -1167,97 +1249,108 @@ internal class ResourceManager : IDisposable
 			{
 				continue;
 			}
+
 			switch (baseRes.mType)
 			{
-			case ResType.ResType_Image:
-			{
-				ImageRes imageRes = (ImageRes)baseRes;
-				if (imageRes.mImage != null)
-				{
-					continue;
-				}
-				flag = DoLoadImage(imageRes);
-				flag2 = true;
-				break;
+				case ResType.ResType_Image:
+					{
+						ImageRes imageRes = (ImageRes)baseRes;
+						if (imageRes.mImage != null)
+						{
+							continue;
+						}
+
+						flag = DoLoadImage(imageRes);
+						flag2 = true;
+						break;
+					}
+				case ResType.ResType_Reanim:
+					{
+						ReanimRes reanimRes = (ReanimRes)baseRes;
+						if (reanimRes.mReanim != null)
+						{
+							continue;
+						}
+
+						flag = DoLoadReanim(ref reanimRes);
+						flag2 = true;
+						break;
+					}
+				case ResType.ResType_Particle:
+					{
+						ParticleRes particleRes = (ParticleRes)baseRes;
+						if (particleRes.mParticle != null)
+						{
+							continue;
+						}
+
+						flag = DoLoadParticle(ref particleRes);
+						flag2 = true;
+						break;
+					}
+				case ResType.ResType_Trail:
+					{
+						TrailRes trailRes = (TrailRes)baseRes;
+						if (trailRes.mTrail != null)
+						{
+							continue;
+						}
+
+						flag = DoLoadTrail(ref trailRes);
+						flag2 = true;
+						break;
+					}
+				case ResType.ResType_Sound:
+					{
+						SoundRes soundRes = (SoundRes)baseRes;
+						if (soundRes.mSoundId != -1)
+						{
+							continue;
+						}
+
+						flag = DoLoadSound(soundRes);
+						flag2 = true;
+						break;
+					}
+				case ResType.ResType_Music:
+					{
+						MusicRes musicRes = (MusicRes)baseRes;
+						if (musicRes.mSongId != -1)
+						{
+							continue;
+						}
+
+						flag = DoLoadMusic(musicRes);
+						flag2 = true;
+						break;
+					}
+				case ResType.ResType_Font:
+					{
+						FontRes fontRes = (FontRes)baseRes;
+						if (fontRes.mFont != null)
+						{
+							continue;
+						}
+
+						flag = DoLoadFont(fontRes);
+						flag2 = true;
+						break;
+					}
 			}
-			case ResType.ResType_Reanim:
-			{
-				ReanimRes reanimRes = (ReanimRes)baseRes;
-				if (reanimRes.mReanim != null)
-				{
-					continue;
-				}
-				flag = DoLoadReanim(ref reanimRes);
-				flag2 = true;
-				break;
-			}
-			case ResType.ResType_Particle:
-			{
-				ParticleRes particleRes = (ParticleRes)baseRes;
-				if (particleRes.mParticle != null)
-				{
-					continue;
-				}
-				flag = DoLoadParticle(ref particleRes);
-				flag2 = true;
-				break;
-			}
-			case ResType.ResType_Trail:
-			{
-				TrailRes trailRes = (TrailRes)baseRes;
-				if (trailRes.mTrail != null)
-				{
-					continue;
-				}
-				flag = DoLoadTrail(ref trailRes);
-				flag2 = true;
-				break;
-			}
-			case ResType.ResType_Sound:
-			{
-				SoundRes soundRes = (SoundRes)baseRes;
-				if (soundRes.mSoundId != -1)
-				{
-					continue;
-				}
-				flag = DoLoadSound(soundRes);
-				flag2 = true;
-				break;
-			}
-			case ResType.ResType_Music:
-			{
-				MusicRes musicRes = (MusicRes)baseRes;
-				if (musicRes.mSongId != -1)
-				{
-					continue;
-				}
-				flag = DoLoadMusic(musicRes);
-				flag2 = true;
-				break;
-			}
-			case ResType.ResType_Font:
-			{
-				FontRes fontRes = (FontRes)baseRes;
-				if (fontRes.mFont != null)
-				{
-					continue;
-				}
-				flag = DoLoadFont(fontRes);
-				flag2 = true;
-				break;
-			}
-			}
+
 			if (flag2)
 			{
 				break;
 			}
 		}
+
 		if (flag)
 		{
 			mLoadedCount++;
 			mProgress = (double)mLoadedCount / (double)mTotalResources;
 			Debug.OutputDebug(mProgress.ToString());
 		}
+
 		return flag;
 	}
 
@@ -1268,6 +1361,7 @@ internal class ResourceManager : IDisposable
 		{
 			backDropContentManager.Unload();
 		}
+
 		while (enumerator.MoveNext())
 		{
 			LevelRes levelRes = (LevelRes)enumerator.Current.Value;
@@ -1279,6 +1373,7 @@ internal class ResourceManager : IDisposable
 				return true;
 			}
 		}
+
 		verticalBackground = null;
 		horizontalBackground = null;
 		return false;
@@ -1286,32 +1381,19 @@ internal class ResourceManager : IDisposable
 
 	private Texture2D LoadTextureFromStream(string filename, bool premultiply, ImageRes.TextureFormat format, SurfaceFormat lowMemorySurfaceFormat)
 	{
-		//IL_01cb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d2: Expected O, but got Unknown
-		//IL_00b4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bb: Expected O, but got Unknown
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a0: Expected O, but got Unknown
-		//IL_00c4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0117: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fe: Unknown result type (might be due to invalid IL or missing references)
 		Texture2D val = null;
 		GraphicsDevice graphicsDevice = GlobalStaticVars.g.GraphicsDevice;
-		using (Stream stream = TitleContainer.OpenStream("Content\\" + filename + "." + format))
+		using (Stream stream = TitleContainer.OpenStream("Content\\" + filename + "." + format.ToString().ToLower()))
 		{
 			val = Texture2D.FromStream(graphicsDevice, stream);
 		}
+
 		bool flag = false;
 		if (!premultiply)
 		{
 			return val;
 		}
+
 		lock (DrawLocker)
 		{
 			if (val.Width * val.Height < 4194304)
@@ -1322,7 +1404,9 @@ internal class ResourceManager : IDisposable
 					flag = true;
 					lock (SexyAppBase.SplashScreenDrawLock)
 					{
-						val2 = ((!Main.DO_LOW_MEMORY_OPTIONS) ? new RenderTarget2D(graphicsDevice, val.Width, val.Height, false, (SurfaceFormat)0, (DepthFormat)0, 0, (RenderTargetUsage)0) : new RenderTarget2D(graphicsDevice, val.Width, val.Height, false, lowMemorySurfaceFormat, (DepthFormat)0, 0, (RenderTargetUsage)0));
+						val2 = ((!Main.DO_LOW_MEMORY_OPTIONS) ? new(graphicsDevice, val.Width, val.Height, false, SurfaceFormat.Color, DepthFormat.None, 0, (RenderTargetUsage)0)
+							: new RenderTarget2D(graphicsDevice, val.Width, val.Height, false, lowMemorySurfaceFormat, (DepthFormat)0, 0, RenderTargetUsage.DiscardContents));
+
 						graphicsDevice.SetRenderTarget(val2);
 						graphicsDevice.Clear(Color.Black);
 						imageLoadSpritebatch.Begin((SpriteSortMode)1, blendColorLoadState);
@@ -1332,21 +1416,19 @@ internal class ResourceManager : IDisposable
 						imageLoadSpritebatch.Draw(val, val.Bounds, Color.White);
 						imageLoadSpritebatch.End();
 						graphicsDevice.SetRenderTarget((RenderTarget2D)null);
-						((GraphicsResource)val).Dispose();
-						return (Texture2D)(object)val2;
+						val.Dispose();
+						return val2;
 					}
 				}
 				catch (Exception ex)
 				{
 					flag = false;
 					_ = ex.Message;
-					if (val2 != null)
-					{
-						((GraphicsResource)val2).Dispose();
-					}
+					val2?.Dispose();
 				}
 			}
 		}
+
 		if (!flag)
 		{
 			Color[] array = (Color[])(object)new Color[val.Width * val.Height];
@@ -1355,6 +1437,7 @@ internal class ResourceManager : IDisposable
 			{
 				PremultiplyPixel(ref array[i]);
 			}
+
 			if (Main.DO_LOW_MEMORY_OPTIONS)
 			{
 				Texture2D val3 = new Texture2D(graphicsDevice, val.Width, val.Height, false, (SurfaceFormat)3);
@@ -1362,8 +1445,9 @@ internal class ResourceManager : IDisposable
 				for (int j = 0; j < array2.Length; j++)
 				{
 					ref Bgra4444 reference = ref array2[j];
-					reference = new Bgra4444(((Color)(ref array[j])).ToVector4());
+					reference = new Bgra4444(array[j].ToVector4());
 				}
+
 				val3.SetData<Bgra4444>(array2);
 				((GraphicsResource)val).Dispose();
 				val = val3;
@@ -1373,40 +1457,45 @@ internal class ResourceManager : IDisposable
 				val.SetData<Color>(array);
 			}
 		}
+
 		return val;
 	}
 
 	private void PremultiplyPixel(ref Color c)
 	{
-		((Color)(ref c)).R = (byte)((float)(((Color)(ref c)).R * ((Color)(ref c)).A) / 255f);
-		((Color)(ref c)).G = (byte)((float)(((Color)(ref c)).G * ((Color)(ref c)).A) / 255f);
-		((Color)(ref c)).B = (byte)((float)(((Color)(ref c)).B * ((Color)(ref c)).A) / 255f);
+		c.R = (byte)(c.R * c.A / 255f);
+		c.G = (byte)(c.G * c.A / 255f);
+		c.B = (byte)(c.B * c.A / 255f);
 	}
 
 	private bool DoLoadImage(ImageRes theRes)
 	{
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
 		Texture2D val;
 		try
 		{
-			string text = ((!theRes.mLanguageSpecific) ? (Path.GetDirectoryName(theRes.mPath) + Constants.ImageSubPath + Path.GetFileName(theRes.mPath)) : (Path.GetDirectoryName(theRes.mPath) + Constants.ImageSubPath + Constants.LanguageSubDir + "/" + Path.GetFileName(theRes.mPath)));
-			val = ((theRes.mFormat != 0) ? LoadTextureFromStream(text, premultiply: true, theRes.mFormat, theRes.lowMemorySurfaceFormat) : GetContentManager(theRes).Load<Texture2D>(text));
+			string text = ((!theRes.mLanguageSpecific) ? (Path.GetDirectoryName(theRes.mPath) + Constants.ImageSubPath + Path.GetFileName(theRes.mPath))
+				: (Path.GetDirectoryName(theRes.mPath) + Constants.ImageSubPath + Constants.LanguageSubDir + "/" + Path.GetFileName(theRes.mPath)));
+			//val = ((theRes.mFormat != ImageRes.TextureFormat.Content) ? LoadTextureFromStream(text, premultiply: true, theRes.mFormat, theRes.lowMemorySurfaceFormat) : GetContentManager(theRes).Load<Texture2D>(text));
+			val = GetContentManager(theRes).Load<Texture2D>(text);
 		}
 		catch (Exception ex)
 		{
 			return Fail("Failed to load image: " + theRes.mPath + ex.Message);
 		}
+
 		theRes.mImage = new Image(val, 0, 0, val.Width, val.Height);
 		if (theRes.mAnimInfo.mAnimType != 0)
 		{
 			theRes.mImage.mAnimInfo = new AnimInfo(theRes.mAnimInfo);
 		}
+
 		theRes.mImage.mNumRows = theRes.mRows;
 		theRes.mImage.mNumCols = theRes.mCols;
 		if (theRes.mUnloadGroup > 0)
 		{
 			unloadableResources.Add(theRes);
 		}
+
 		ResourceLoadedHook(theRes);
 		return true;
 	}
@@ -1426,12 +1515,14 @@ internal class ResourceManager : IDisposable
 		{
 			return Fail("SysFont not supported");
 		}
+
 		if (fontRes.mDefault)
 		{
 			font.AddLayer(arial);
 			fontRes.mFont = font;
 			return true;
 		}
+
 		XmlReader xmlReader = XmlReader.Create(TitleContainer.OpenStream(fontRes.mPath));
 		xmlReader.Read();
 		while (xmlReader.Read())
@@ -1440,6 +1531,7 @@ internal class ResourceManager : IDisposable
 			{
 				continue;
 			}
+
 			if (xmlReader.Name == "Offsets")
 			{
 				Vector2 zero = Vector2.Zero;
@@ -1454,15 +1546,19 @@ internal class ResourceManager : IDisposable
 						{
 							zero.X = Convert.ToInt32(value);
 						}
+
 						if (!string.IsNullOrEmpty(value2))
 						{
 							zero.Y = Convert.ToInt32(value2);
 						}
+
 						font.AddCharacterOffset(c, zero);
 					}
+
 					xmlReader.Read();
 				}
 			}
+
 			if (xmlReader.Name == "Layers")
 			{
 				string value3 = xmlReader["magic"];
@@ -1474,6 +1570,7 @@ internal class ResourceManager : IDisposable
 				{
 					font.characterOffsetMagic = 0;
 				}
+
 				Vector2 zero2 = Vector2.Zero;
 				while (xmlReader.NodeType != XmlNodeType.EndElement || !(xmlReader.Name == "Layers"))
 				{
@@ -1491,41 +1588,49 @@ internal class ResourceManager : IDisposable
 							{
 								zero2.X = Convert.ToInt32(value4);
 							}
+
 							if (!string.IsNullOrEmpty(value5))
 							{
 								zero2.Y = Convert.ToInt32(value5);
 							}
 						}
 					}
+
 					if (xmlReader.NodeType == XmlNodeType.Text)
 					{
 						string value6 = xmlReader.Value;
 						font.AddLayer(mContentManager.Load<SpriteFont>(value6), zero2);
 					}
+
 					xmlReader.Read();
 				}
 			}
+
 			if (xmlReader.Name == "Ascent")
 			{
 				xmlReader.Read();
 				font.mAscent = -1 * Convert.ToInt32(xmlReader.Value);
 			}
+
 			if (xmlReader.Name == "Height")
 			{
 				xmlReader.Read();
 				font.mHeight = -1 * Convert.ToInt32(xmlReader.Value);
 			}
+
 			if (xmlReader.Name == "SpaceChar")
 			{
 				xmlReader.Read();
 				font.SpaceChar = xmlReader.Value;
 			}
+
 			if (xmlReader.Name == "StringWidthCachingEnabled")
 			{
 				xmlReader.Read();
 				font.StringWidthCachingEnabled = Convert.ToBoolean(xmlReader.Value);
 			}
 		}
+
 		fontRes.mFont = font;
 		ResourceLoadedHook(fontRes);
 		return true;
@@ -1538,18 +1643,22 @@ internal class ResourceManager : IDisposable
 		{
 			return Fail("Out of free sound ids");
 		}
+
 		if (!mApp.mSoundManager.LoadSound((uint)freeSoundId, soundRes.mPath))
 		{
 			return Fail("Failed to load sound: " + soundRes.mPath);
 		}
+
 		if (soundRes.mVolume >= 0.0)
 		{
 			mApp.mSoundManager.SetBaseVolume((uint)freeSoundId, soundRes.mVolume);
 		}
+
 		if (soundRes.mPanning != 0)
 		{
 			mApp.mSoundManager.SetBasePan((uint)freeSoundId, soundRes.mPanning);
 		}
+
 		soundRes.mSoundId = freeSoundId;
 		ResourceLoadedHook(soundRes);
 		return true;
@@ -1562,10 +1671,12 @@ internal class ResourceManager : IDisposable
 		{
 			return Fail("Out of free song ids");
 		}
+
 		if (!mApp.mMusicInterface.LoadMusic(freeMusicId, musicRes.mPath))
 		{
 			return Fail("Failed to load song: " + musicRes.mPath);
 		}
+
 		musicRes.mSongId = freeMusicId;
 		ResourceLoadedHook(musicRes);
 		return true;
@@ -1578,6 +1689,7 @@ internal class ResourceManager : IDisposable
 		{
 			return Fail("Failed to load reanim: " + reanimRes2.mPath);
 		}
+
 		ResourceLoadedHook(reanimRes);
 		return true;
 	}
@@ -1589,6 +1701,7 @@ internal class ResourceManager : IDisposable
 		{
 			return Fail("Failed to load reanim: " + particleRes2.mPath);
 		}
+
 		ResourceLoadedHook(particleRes);
 		return true;
 	}
@@ -1600,13 +1713,12 @@ internal class ResourceManager : IDisposable
 		{
 			return Fail("Failed to load reanim: " + trailRes2.mPath);
 		}
+
 		ResourceLoadedHook(trailRes);
 		return true;
 	}
 
-	private void ResourceLoadedHook(BaseRes theRes)
-	{
-	}
+	private void ResourceLoadedHook(BaseRes theRes) { }
 
 	private bool Fail(string theErrorText)
 	{
@@ -1618,17 +1730,20 @@ internal class ResourceManager : IDisposable
 				mError = theErrorText;
 				return false;
 			}
+
 			int currentLineNum = mXMLParser.GetCurrentLineNum();
 			mError = theErrorText;
 			if (currentLineNum > 0)
 			{
 				mError = mError + " on Line " + currentLineNum;
 			}
+
 			if (!string.IsNullOrEmpty(mXMLParser.GetFileName()))
 			{
 				mError = mError + " in File '" + mXMLParser.GetFileName() + "'";
 			}
 		}
+
 		return false;
 	}
 
@@ -1643,21 +1758,22 @@ internal class ResourceManager : IDisposable
 		{
 			return true;
 		}
+
 		PerfTimer perfTimer = default(PerfTimer);
 		perfTimer.Start();
 		StartLoadResources(theGroup);
-		while (!GlobalStaticVars.gSexyAppBase.mShutdown && LoadNextResource())
-		{
-		}
+		while (!GlobalStaticVars.gSexyAppBase.mShutdown && LoadNextResource()) { }
 		if (GlobalStaticVars.gSexyAppBase.mShutdown)
 		{
 			return false;
 		}
+
 		if (HadError())
 		{
 			GlobalStaticVars.gSexyAppBase.ShowResourceError(boolean: true);
 			return false;
 		}
+
 		mLoadedGroups.Add(theGroup);
 		Math.Max((int)perfTimer.GetDuration(), 0);
 		return true;

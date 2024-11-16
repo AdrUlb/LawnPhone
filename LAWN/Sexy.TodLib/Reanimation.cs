@@ -102,6 +102,7 @@ internal class Reanimation
 			value = s.ToLower();
 			lowercaseCache.Add(s, value);
 		}
+
 		return value;
 	}
 
@@ -119,6 +120,7 @@ internal class Reanimation
 		{
 			return unusedObjects.Pop();
 		}
+
 		return new Reanimation();
 	}
 
@@ -139,8 +141,10 @@ internal class Reanimation
 			{
 				mTrackInstances[i].PrepareForReuse();
 			}
+
 			mTrackInstances[i] = null;
 		}
+
 		mClip = false;
 		mAnimTime = 0f;
 		mAnimRate = 12f;
@@ -224,6 +228,7 @@ internal class Reanimation
 		{
 			return;
 		}
+
 		mLastFrameTime = mAnimTime;
 		mAnimTime += ReanimatorXnaHelpers.SECONDS_PER_UPDATE * mAnimRate / (float)mFrameCount;
 		if (mAnimRate > 0f)
@@ -273,6 +278,7 @@ internal class Reanimation
 			mLoopCount = 1;
 			mAnimTime = 0f;
 		}
+
 		int mTrackCount = mDefinition.mTrackCount;
 		for (int i = 0; i < mTrackCount; i++)
 		{
@@ -283,16 +289,19 @@ internal class Reanimation
 				{
 					reanimatorTrackInstance.mBlendCounter--;
 				}
+
 				if (reanimatorTrackInstance.mShakeOverride != 0f)
 				{
 					reanimatorTrackInstance.mShakeX = TodCommon.RandRangeFloat(0f - reanimatorTrackInstance.mShakeOverride, reanimatorTrackInstance.mShakeOverride);
 					reanimatorTrackInstance.mShakeY = TodCommon.RandRangeFloat(0f - reanimatorTrackInstance.mShakeOverride, reanimatorTrackInstance.mShakeOverride);
 				}
+
 				ReanimatorTrack reanimatorTrack = mDefinition.mTracks[i];
 				if (reanimatorTrack.IsAttacher)
 				{
 					UpdateAttacherTrack(i);
 				}
+
 				if (reanimatorTrackInstance.mAttachmentID != null)
 				{
 					GetAttachmentOverlayMatrix(i, out aOverlayMatrix);
@@ -314,6 +323,7 @@ internal class Reanimation
 		{
 			return;
 		}
+
 		for (int i = 0; i < mDefinition.mTrackCount; i++)
 		{
 			ReanimatorTrackInstance reanimatorTrackInstance = mTrackInstances[i];
@@ -321,11 +331,13 @@ internal class Reanimation
 			{
 				continue;
 			}
+
 			bool flag = DrawTrack(g, i, theRenderGroup);
 			if (reanimatorTrackInstance.mAttachmentID == null)
 			{
 				continue;
 			}
+
 			Attachment mAttachmentID = reanimatorTrackInstance.mAttachmentID;
 			for (int j = 0; j < mAttachmentID.mNumEffects; j++)
 			{
@@ -338,6 +350,7 @@ internal class Reanimation
 					reanimation.mExtraOverlayColor = mExtraOverlayColor;
 				}
 			}
+
 			GlobalMembersAttachment.AttachmentDraw(reanimatorTrackInstance.mAttachmentID, g, !flag, doScale: false);
 		}
 	}
@@ -366,44 +379,51 @@ internal class Reanimation
 		{
 			return false;
 		}
+
 		if (aTransformCurrent.mFrame < 0f)
 		{
 			aTransformCurrent.PrepareForReuse();
 			return false;
 		}
+
 		int num = (int)(aTransformCurrent.mFrame + 0.5f);
 		ReanimatorTrackInstance reanimatorTrackInstance = mTrackInstances[theTrackIndex];
 		SexyColor mTrackColor = reanimatorTrackInstance.mTrackColor;
 		if (!reanimatorTrackInstance.mIgnoreColorOverride)
 		{
-			((Color)(ref mTrackColor.Color)).R = (byte)((float)(mColorOverride.mRed * mTrackColor.mRed) / 255f);
-			((Color)(ref mTrackColor.Color)).G = (byte)((float)(mColorOverride.mGreen * mTrackColor.mGreen) / 255f);
-			((Color)(ref mTrackColor.Color)).B = (byte)((float)(mColorOverride.mBlue * mTrackColor.mBlue) / 255f);
-			((Color)(ref mTrackColor.Color)).A = (byte)((float)(mColorOverride.mAlpha * mTrackColor.mAlpha) / 255f);
+			mTrackColor.Color.R = (byte)((float)(mColorOverride.mRed * mTrackColor.mRed) / 255f);
+			mTrackColor.Color.G = (byte)((float)(mColorOverride.mGreen * mTrackColor.mGreen) / 255f);
+			mTrackColor.Color.B = (byte)((float)(mColorOverride.mBlue * mTrackColor.mBlue) / 255f);
+			mTrackColor.Color.A = (byte)((float)(mColorOverride.mAlpha * mTrackColor.mAlpha) / 255f);
 		}
+
 		if (g.mColorizeImages)
 		{
 			ref Color color = ref mTrackColor.Color;
 			Color mColor = g.mColor;
-			((Color)(ref color)).R = (byte)((float)(((Color)(ref mColor)).R * mTrackColor.mRed) / 255f);
+			color.R = (byte)((float)(mColor.R * mTrackColor.mRed) / 255f);
 			ref Color color2 = ref mTrackColor.Color;
 			Color mColor2 = g.mColor;
-			((Color)(ref color2)).G = (byte)((float)(((Color)(ref mColor2)).G * mTrackColor.mGreen) / 255f);
+			color2.G = (byte)((float)(mColor2.G * mTrackColor.mGreen) / 255f);
 			ref Color color3 = ref mTrackColor.Color;
 			Color mColor3 = g.mColor;
-			((Color)(ref color3)).B = (byte)((float)(((Color)(ref mColor3)).B * mTrackColor.mBlue) / 255f);
+			color3.B = (byte)((float)(mColor3.B * mTrackColor.mBlue) / 255f);
 			ref Color color4 = ref mTrackColor.Color;
 			Color mColor4 = g.mColor;
-			((Color)(ref color4)).A = (byte)((float)(((Color)(ref mColor4)).A * mTrackColor.mAlpha) / 255f);
+			mColor4.A = (byte)((float)(mColor4.A * mTrackColor.mAlpha) / 255f);
 		}
+
 		int num2 = TodCommon.ClampInt((int)(aTransformCurrent.mAlpha * (float)mTrackColor.mAlpha + 0.5f), 0, 255);
 		if (num2 <= 0)
 		{
 			aTransformCurrent.PrepareForReuse();
 			return false;
 		}
+
 		mTrackColor.mAlpha = num2;
-		SexyColor theColor = ((!mEnableExtraAdditiveDraw) ? default(SexyColor) : new SexyColor(mExtraAdditiveColor.mRed, mExtraAdditiveColor.mGreen, mExtraAdditiveColor.mBlue, TodCommon.ColorComponentMultiply(mExtraAdditiveColor.mAlpha, num2)));
+		SexyColor theColor = ((!mEnableExtraAdditiveDraw) ? default(SexyColor)
+			: new SexyColor(mExtraAdditiveColor.mRed, mExtraAdditiveColor.mGreen, mExtraAdditiveColor.mBlue, TodCommon.ColorComponentMultiply(mExtraAdditiveColor.mAlpha, num2)));
+
 		Image image = aTransformCurrent.mImage;
 		ReanimAtlasImage reanimAtlasImage = null;
 		if (mDefinition.mReanimAtlas != null && image != null)
@@ -413,11 +433,13 @@ internal class Reanimation
 			{
 				image = reanimAtlasImage.mOriginalImage;
 			}
+
 			if (reanimatorTrackInstance.mImageOverride != null)
 			{
 				reanimAtlasImage = null;
 			}
 		}
+
 		bool flag = false;
 		float num3 = 0f;
 		float num4 = 0f;
@@ -441,8 +463,10 @@ internal class Reanimation
 				aTransformCurrent.PrepareForReuse();
 				return false;
 			}
+
 			flag = true;
 		}
+
 		TRect theClipRect = g.mClipRect;
 		didClipIgnore = false;
 		if (reanimatorTrackInstance.mIgnoreClipRect)
@@ -450,6 +474,7 @@ internal class Reanimation
 			theClipRect = new TRect(0, 0, 800, 600);
 			didClipIgnore = true;
 		}
+
 		float num8 = aTransformCurrent.mSkewXCos * aTransformCurrent.mScaleX;
 		float num9 = (0f - aTransformCurrent.mSkewXSin) * aTransformCurrent.mScaleX;
 		float num10 = aTransformCurrent.mSkewYSin * aTransformCurrent.mScaleY;
@@ -479,6 +504,7 @@ internal class Reanimation
 			int num14 = 0;
 			num14++;
 		}
+
 		if (reanimAtlasImage == null)
 		{
 			if (image != null)
@@ -487,10 +513,12 @@ internal class Reanimation
 				{
 					image = reanimatorTrackInstance.mImageOverride;
 				}
+
 				while (num >= image.mNumCols)
 				{
 					num -= image.mNumCols;
 				}
+
 				int num15 = 0;
 				int celWidth = image.GetCelWidth();
 				int celHeight = image.GetCelHeight();
@@ -500,6 +528,7 @@ internal class Reanimation
 				{
 					ReanimBltMatrix(g, image, ref tempMatrix, ref theClipRect, theColor, Graphics.DrawMode.DRAWMODE_ADDITIVE, theSrcRect);
 				}
+
 				TodCommon.OffsetForGraphicsTranslation = true;
 			}
 			else if (aTransformCurrent.mFont != null && !string.IsNullOrEmpty(aTransformCurrent.mText))
@@ -521,6 +550,7 @@ internal class Reanimation
 				g.SetColor(color5);
 			}
 		}
+
 		aTransformCurrent.PrepareForReuse();
 		return true;
 	}
@@ -533,6 +563,7 @@ internal class Reanimation
 		{
 			return;
 		}
+
 		ReanimatorTrackInstance reanimatorTrackInstance = mTrackInstances[theTrackIndex];
 		int num = (int)(aTransformCurrent.mFrame + 0.5f);
 		if (num >= 0 && reanimatorTrackInstance.mBlendCounter > 0)
@@ -543,6 +574,7 @@ internal class Reanimation
 			{
 				aTransformCurrent.PrepareForReuse();
 			}
+
 			aTransformCurrent = theResult;
 		}
 	}
@@ -552,11 +584,13 @@ internal class Reanimation
 		ReanimatorTrack reanimatorTrack = mDefinition.mTracks[theTrackIndex];
 		ReanimatorTransform reanimatorTransform = reanimatorTrack.mTransforms[theFrameTime.mAnimFrameBeforeInt];
 		ReanimatorTransform reanimatorTransform2 = reanimatorTrack.mTransforms[theFrameTime.mAnimFrameAfterInt];
-		if (nullIfInvalidFrame && (reanimatorTransform.mFrame == -1f || (reanimatorTransform.mFrame != -1f && reanimatorTransform2.mFrame == -1f && theFrameTime.mFraction > 0f && mTrackInstances[theTrackIndex].mTruncateDisappearingFrames)))
+		if (nullIfInvalidFrame &&
+			(reanimatorTransform.mFrame == -1f || (reanimatorTransform.mFrame != -1f && reanimatorTransform2.mFrame == -1f && theFrameTime.mFraction > 0f && mTrackInstances[theTrackIndex].mTruncateDisappearingFrames)))
 		{
 			aTransform = null;
 			return;
 		}
+
 		float mFraction = theFrameTime.mFraction;
 		aTransform = ReanimatorTransform.GetNewReanimatorTransform();
 		if (mInterpolate)
@@ -587,6 +621,7 @@ internal class Reanimation
 			aTransform.mSkewYCos = reanimatorTransform.mSkewYCos;
 			aTransform.mSkewYSin = reanimatorTransform.mSkewYSin;
 		}
+
 		aTransform.mImage = reanimatorTransform.mImage;
 		aTransform.mFont = reanimatorTransform.mFont;
 		aTransform.mText = reanimatorTransform.mText;
@@ -607,9 +642,12 @@ internal class Reanimation
 			theFrameTime = mFrameTime;
 			return;
 		}
+
 		mGetFrameTime = false;
 		theFrameTime = default(ReanimatorFrameTime);
-		int num = ((mLoopType != ReanimLoopType.REANIM_PLAY_ONCE_FULL_LAST_FRAME && mLoopType != ReanimLoopType.REANIM_LOOP_FULL_LAST_FRAME && mLoopType != ReanimLoopType.REANIM_PLAY_ONCE_FULL_LAST_FRAME_AND_HOLD) ? (mFrameCount - 1) : mFrameCount);
+		int num = ((mLoopType != ReanimLoopType.REANIM_PLAY_ONCE_FULL_LAST_FRAME && mLoopType != ReanimLoopType.REANIM_LOOP_FULL_LAST_FRAME && mLoopType != ReanimLoopType.REANIM_PLAY_ONCE_FULL_LAST_FRAME_AND_HOLD)
+			? (mFrameCount - 1) : mFrameCount);
+
 		float num2 = (float)mFrameStart + (float)num * mAnimTime;
 		float num3 = (int)num2;
 		theFrameTime.mFraction = num2 - num3;
@@ -623,6 +661,7 @@ internal class Reanimation
 		{
 			theFrameTime.mAnimFrameAfterInt = (short)(theFrameTime.mAnimFrameBeforeInt + 1);
 		}
+
 		mFrameTime = theFrameTime;
 	}
 
@@ -637,6 +676,7 @@ internal class Reanimation
 				return i;
 			}
 		}
+
 		return 0;
 	}
 
@@ -648,6 +688,7 @@ internal class Reanimation
 			{
 				theAttachReanim.mFrameBasePose = theAttachReanim.mFrameStart;
 			}
+
 			int num = theAttachReanim.FindTrackIndex(theTrackName);
 			ReanimatorTrackInstance reanimatorTrackInstance = theAttachReanim.mTrackInstances[num];
 			GlobalMembersAttachment.AttachReanim(ref reanimatorTrackInstance.mAttachmentID, this, 0f, 0f);
@@ -671,7 +712,7 @@ internal class Reanimation
 		float mTransY = aTransformCurrent.mTransY;
 		aTransformCurrent.PrepareForReuse();
 		GetTrackBasePoseMatrix(theTrackIndex, out basePose);
-		Matrix.Invert(ref basePose.mMatrix, ref aBasePoseMatrix);
+		Matrix.Invert(ref basePose.mMatrix, out aBasePoseMatrix);
 		theOverlayMatrix = identity;
 		tempOverlayMatrix = new Matrix
 		{
@@ -692,6 +733,7 @@ internal class Reanimation
 			M43 = 0f,
 			M44 = 1f
 		};
+
 		theOverlayMatrix.mMatrix = new Matrix
 		{
 			M11 = tempOverlayMatrix.M11 * mOverlayMatrix.mMatrix.M11 + tempOverlayMatrix.M12 * mOverlayMatrix.mMatrix.M21,
@@ -723,6 +765,7 @@ internal class Reanimation
 		{
 			mAnimTime = 0.9999999f;
 		}
+
 		mLastFrameTime = -1f;
 		GetFramesForLayer(theTrackName, out mFrameStart, out mFrameCount);
 	}
@@ -764,6 +807,7 @@ internal class Reanimation
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -777,17 +821,20 @@ internal class Reanimation
 			{
 				continue;
 			}
+
 			int num = TodCommon.FloatRoundToInt(aTransformCurrent.mFrame);
 			if (num < 0)
 			{
 				aTransformCurrent.PrepareForReuse();
 				continue;
 			}
+
 			ReanimatorTrackInstance reanimatorTrackInstance = mTrackInstances[i];
 			if (reanimatorTrackInstance.mBlendTransform != null)
 			{
 				reanimatorTrackInstance.mBlendTransform.PrepareForReuse();
 			}
+
 			reanimatorTrackInstance.mBlendTransform = aTransformCurrent;
 			reanimatorTrackInstance.mBlendCounter = (byte)((float)(int)theBlendTime / 3f);
 			reanimatorTrackInstance.mBlendTime = (byte)((float)(int)theBlendTime / 3f);
@@ -806,8 +853,7 @@ internal class Reanimation
 
 	public void SetPosition(float theX, float theY)
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		((Matrix)(ref mOverlayMatrix.mMatrix)).Translation = new Vector3(theX, theY, 0f);
+		mOverlayMatrix.mMatrix.Translation = new Vector3(theX, theY, 0f);
 	}
 
 	public void OverrideScale(float theScaleX, float theScaleY)
@@ -870,14 +916,6 @@ internal class Reanimation
 
 	public void GetTrackMatrix(int theTrackIndex, ref SexyTransform2D theMatrix)
 	{
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0111: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0116: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0143: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0148: Unknown result type (might be due to invalid IL or missing references)
 		ReanimatorTrackInstance reanimatorTrackInstance = mTrackInstances[theTrackIndex];
 		mGetFrameTime = true;
 		GetCurrentTransform(theTrackIndex, out var aTransformCurrent, nullIfInvalidFrame: false);
@@ -891,18 +929,20 @@ internal class Reanimation
 				image = encodedReanimAtlas.mOriginalImage;
 			}
 		}
+
 		theMatrix.LoadIdentity();
 		tempMatrix = Matrix.Identity;
 		if (image != null && num >= 0)
 		{
 			int celWidth = image.GetCelWidth();
 			int celHeight = image.GetCelHeight();
-			Matrix.CreateTranslation((float)celWidth * 0.5f, (float)celHeight * 0.5f, 0f, ref tempMatrix);
+			Matrix.CreateTranslation((float)celWidth * 0.5f, (float)celHeight * 0.5f, 0f, out tempMatrix);
 		}
 		else if (aTransformCurrent.mFont != null && !string.IsNullOrEmpty(aTransformCurrent.mText))
 		{
-			Matrix.CreateTranslation(0f, (float)aTransformCurrent.mFont.mAscent, 0f, ref tempMatrix);
+			Matrix.CreateTranslation(0f, (float)aTransformCurrent.mFont.mAscent, 0f, out tempMatrix);
 		}
+
 		SexyTransform2D sexyTransform2D = default(SexyTransform2D);
 		MatrixFromTransform(aTransformCurrent, out sexyTransform2D.mMatrix);
 		TodCommon.SexyMatrix3Multiply(ref tempMatrix, sexyTransform2D.mMatrix, tempMatrix);
@@ -914,10 +954,6 @@ internal class Reanimation
 
 	public void GetTrackTranslationMatrix(int theTrackIndex, ref SexyTransform2D theMatrix)
 	{
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0159: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015e: Unknown result type (might be due to invalid IL or missing references)
 		ReanimatorTrackInstance reanimatorTrackInstance = mTrackInstances[theTrackIndex];
 		mGetFrameTime = true;
 		GetCurrentTransform(theTrackIndex, out var aTransformCurrent, nullIfInvalidFrame: false);
@@ -931,18 +967,20 @@ internal class Reanimation
 				image = encodedReanimAtlas.mOriginalImage;
 			}
 		}
+
 		theMatrix.LoadIdentity();
 		tempMatrix = Matrix.Identity;
 		if (image != null && num >= 0)
 		{
 			int celWidth = image.GetCelWidth();
 			int celHeight = image.GetCelHeight();
-			Matrix.CreateTranslation((float)celWidth * 0.5f, (float)celHeight * 0.5f, 0f, ref tempMatrix);
+			Matrix.CreateTranslation((float)celWidth * 0.5f, (float)celHeight * 0.5f, 0f, out tempMatrix);
 		}
 		else if (aTransformCurrent.mFont != null && !string.IsNullOrEmpty(aTransformCurrent.mText))
 		{
-			Matrix.CreateTranslation(0f, (float)aTransformCurrent.mFont.mAscent, 0f, ref tempMatrix);
+			Matrix.CreateTranslation(0f, (float)aTransformCurrent.mFont.mAscent, 0f, out tempMatrix);
 		}
+
 		SexyTransform2D sexyTransform2D = default(SexyTransform2D);
 		MatrixFromTransform(aTransformCurrent, out sexyTransform2D.mMatrix);
 		tempMatrix.M41 = sexyTransform2D.mMatrix.M41 + mOverlayMatrix.mMatrix.M41 + reanimatorTrackInstance.mShakeX - 0.5f;
@@ -999,14 +1037,17 @@ internal class Reanimation
 		{
 			return false;
 		}
+
 		if (mLastFrameTime < 0f)
 		{
 			return false;
 		}
+
 		if (mAnimRate <= 0f)
 		{
 			return false;
 		}
+
 		if (mAnimTime >= mLastFrameTime)
 		{
 			if (theEventTime >= mLastFrameTime && theEventTime < mAnimTime)
@@ -1018,12 +1059,11 @@ internal class Reanimation
 		{
 			return true;
 		}
+
 		return false;
 	}
 
-	public void TodTriangleGroupDraw(Graphics g, ref TodTriangleGroup theTriangleGroup)
-	{
-	}
+	public void TodTriangleGroupDraw(Graphics g, ref TodTriangleGroup theTriangleGroup) { }
 
 	public Image GetCurrentTrackImage(string theTrackName)
 	{
@@ -1038,15 +1078,13 @@ internal class Reanimation
 				image = encodedReanimAtlas.mOriginalImage;
 			}
 		}
+
 		aTransformCurrent.PrepareForReuse();
 		return image;
 	}
 
 	public AttachEffect AttachParticleToTrack(string theTrackName, ref TodParticleSystem theParticleSystem, float thePosX, float thePosY)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
 		int num = FindTrackIndex(theTrackName);
 		ReanimatorTrackInstance reanimatorTrackInstance = mTrackInstances[num];
 		GetTrackBasePoseMatrix(num, out var theBasePoseMatrix);
@@ -1062,11 +1100,13 @@ internal class Reanimation
 			theBasePoseMatrix.LoadIdentity();
 			return;
 		}
+
 		short num = mFrameBasePose;
 		if (num == -1)
 		{
 			num = mFrameStart;
 		}
+
 		ReanimatorFrameTime theFrameTime = default(ReanimatorFrameTime);
 		theFrameTime.mFraction = 0f;
 		theFrameTime.mAnimFrameBeforeInt = num;
@@ -1086,6 +1126,7 @@ internal class Reanimation
 		{
 			return true;
 		}
+
 		return false;
 	}
 
@@ -1113,10 +1154,12 @@ internal class Reanimation
 		{
 			StartBlend(theBlendTime);
 		}
+
 		if (theAnimRate != 0f)
 		{
 			mAnimRate = theAnimRate;
 		}
+
 		mLoopType = theLoopType;
 		mLoopCount = 0;
 		SetFramesForLayer(theTrackName);
@@ -1130,6 +1173,7 @@ internal class Reanimation
 			{
 				mTrackInstances[i] = null;
 			}
+
 			mTrackInstances = null;
 		}
 	}
@@ -1148,6 +1192,7 @@ internal class Reanimation
 			theFrameCount = 0;
 			return;
 		}
+
 		int num = FindTrackIndex(theTrackName);
 		ReanimatorTrack reanimatorTrack = mDefinition.mTracks[num];
 		theFrameStart = 0;
@@ -1162,6 +1207,7 @@ internal class Reanimation
 				break;
 			}
 		}
+
 		for (int num3 = reanimatorTrack.mTransformCount - 1; num3 >= num2; num3--)
 		{
 			ReanimatorTransform reanimatorTransform2 = reanimatorTrack.mTransforms[num3];
@@ -1194,11 +1240,13 @@ internal class Reanimation
 				}
 			}
 		}
+
 		if (reanimationType == ReanimationType.REANIM_NONE)
 		{
 			GlobalMembersAttachment.AttachmentDie(ref reanimatorTrackInstance.mAttachmentID);
 			return;
 		}
+
 		Reanimation theAttachReanim = GlobalMembersAttachment.FindReanimAttachment(reanimatorTrackInstance.mAttachmentID);
 		if (theAttachReanim == null || theAttachReanim.mReanimationType != reanimationType)
 		{
@@ -1209,6 +1257,7 @@ internal class Reanimation
 			GlobalMembersAttachment.AttachReanim(ref reanimatorTrackInstance.mAttachmentID, theAttachReanim, 0f, 0f);
 			mFrameBasePose = ReanimatorXnaHelpers.NO_BASE_POSE;
 		}
+
 		if (theAttacherInfo.mTrackName.Length != 0)
 		{
 			theAttachReanim.GetFramesForLayer(theAttacherInfo.mTrackName, out var theFrameStart, out var theFrameCount);
@@ -1217,6 +1266,7 @@ internal class Reanimation
 				theAttachReanim.StartBlend(20);
 				theAttachReanim.SetFramesForLayer(theAttacherInfo.mTrackName);
 			}
+
 			if (theAttacherInfo.mAnimRate == 12f && theAttacherInfo.mTrackName == "anim_walk" && theAttachReanim.TrackExists("_ground"))
 			{
 				AttacherSynchWalkSpeed(theTrackIndex, ref theAttachReanim, theAttacherInfo);
@@ -1225,8 +1275,10 @@ internal class Reanimation
 			{
 				theAttachReanim.mAnimRate = theAttacherInfo.mAnimRate;
 			}
+
 			theAttachReanim.mLoopType = theAttacherInfo.mLoopType;
 		}
+
 		SexyColor theColor = TodCommon.ColorsMultiply(mColorOverride, reanimatorTrackInstance.mTrackColor);
 		theColor.mAlpha = TodCommon.ClampInt(TodCommon.FloatRoundToInt(aTransformCurrent.mAlpha * (float)theColor.mAlpha), 0, 255);
 		GlobalMembersAttachment.AttachmentPropogateColor(reanimatorTrackInstance.mAttachmentID, theColor, mEnableExtraAdditiveDraw, mExtraAdditiveColor, mEnableExtraOverlayDraw, mExtraOverlayColor);
@@ -1243,17 +1295,20 @@ internal class Reanimation
 		{
 			return;
 		}
+
 		int num = theTransform.mText.IndexOf("__");
 		if (num == -1)
 		{
 			return;
 		}
+
 		int num2 = theTransform.mText.IndexOf("[", num + 2);
 		int num3 = theTransform.mText.IndexOf("__", num + 2);
 		if (num2 != -1 && num3 != -1 && num2 < num3)
 		{
 			return;
 		}
+
 		if (num3 != -1)
 		{
 			theAttacherInfo.mReanimName = theTransform.mText.Substring(num + 2, num3 - num - 2);
@@ -1274,6 +1329,7 @@ internal class Reanimation
 		{
 			theAttacherInfo.mReanimName = theTransform.mText.Substring(num + 2);
 		}
+
 		while (num2 != -1)
 		{
 			int num4 = theTransform.mText.IndexOf("]", num2 + 1);
@@ -1281,6 +1337,7 @@ internal class Reanimation
 			{
 				break;
 			}
+
 			string text = theTransform.mText.Substring(num2 + 1, num4 - num2 - 1);
 			if (float.TryParse(text, out var result))
 			{
@@ -1294,6 +1351,7 @@ internal class Reanimation
 			{
 				theAttacherInfo.mLoopType = ReanimLoopType.REANIM_PLAY_ONCE;
 			}
+
 			num2 = theTransform.mText.IndexOf("[", num4 + 1);
 		}
 	}
@@ -1307,10 +1365,9 @@ internal class Reanimation
 		{
 			num--;
 		}
+
 		int i;
-		for (i = theFrameTime.mAnimFrameBeforeInt; i < mFrameStart + mFrameCount - 1 && !(reanimatorTrack.mTransforms[i + 1].mText != reanimatorTrack.mTransforms[i].mText); i++)
-		{
-		}
+		for (i = theFrameTime.mAnimFrameBeforeInt; i < mFrameStart + mFrameCount - 1 && !(reanimatorTrack.mTransforms[i + 1].mText != reanimatorTrack.mTransforms[i].mText); i++) { }
 		int num2 = i - num;
 		ReanimatorTransform reanimatorTransform = reanimatorTrack.mTransforms[num];
 		ReanimatorTransform reanimatorTransform2 = reanimatorTrack.mTransforms[num + num2 - 1];
@@ -1319,6 +1376,7 @@ internal class Reanimation
 			theAttachReanim.mAnimRate = 0f;
 			return;
 		}
+
 		float num3 = 0f - (reanimatorTransform2.mTransX - reanimatorTransform.mTransX);
 		float num4 = (float)num2 / mAnimRate;
 		if (TodCommon.FloatApproxEqual(num4, 0f))
@@ -1326,6 +1384,7 @@ internal class Reanimation
 			theAttachReanim.mAnimRate = 0f;
 			return;
 		}
+
 		int num5 = theAttachReanim.FindTrackIndex("_ground");
 		ReanimatorTrack reanimatorTrack2 = theAttachReanim.mDefinition.mTracks[num5];
 		ReanimatorTransform reanimatorTransform3 = reanimatorTrack2.mTransforms[theAttachReanim.mFrameStart];
@@ -1336,6 +1395,7 @@ internal class Reanimation
 			theAttachReanim.mAnimRate = 0f;
 			return;
 		}
+
 		float num7 = num3 / num6;
 		theAttachReanim.GetCurrentTransform(num5, out var aTransformCurrent, nullIfInvalidFrame: false);
 		float num8 = aTransformCurrent.mTransX - reanimatorTransform3.mTransX;
@@ -1346,6 +1406,7 @@ internal class Reanimation
 		{
 			attachEffect.mOffset.mMatrix.M13 = num9 - num8;
 		}
+
 		theAttachReanim.mAnimRate = num7 * (float)theAttachReanim.mFrameCount / num4;
 	}
 
@@ -1356,6 +1417,7 @@ internal class Reanimation
 		{
 			return true;
 		}
+
 		return false;
 	}
 
@@ -1368,7 +1430,13 @@ internal class Reanimation
 	public void ReanimBltMatrix(Graphics g, Image theImage, ref Matrix theTransform, ref TRect theClipRect, SexyColor theColor, Graphics.DrawMode theDrawMode, TRect theSrcRect)
 	{
 		ReanimationParams reanimationParams = ReanimatorXnaHelpers.gReanimationParamArray[(int)mReanimationType];
-		if (!GlobalStaticVars.gSexyAppBase.Is3DAccelerated() && TodCommon.TestBit((uint)reanimationParams.mReanimParamFlags, 1) && TodCommon.FloatApproxEqual(theTransform.M12, 0f) && TodCommon.FloatApproxEqual(theTransform.M21, 0f) && theTransform.M11 > 0f && theTransform.M22 > 0f && theColor == SexyColor.White)
+		if (!GlobalStaticVars.gSexyAppBase.Is3DAccelerated() &&
+			TodCommon.TestBit((uint)reanimationParams.mReanimParamFlags, 1) &&
+			TodCommon.FloatApproxEqual(theTransform.M12, 0f) &&
+			TodCommon.FloatApproxEqual(theTransform.M21, 0f) &&
+			theTransform.M11 > 0f &&
+			theTransform.M22 > 0f &&
+			theColor == SexyColor.White)
 		{
 			float m = theTransform.M11;
 			float m2 = theTransform.M22;
@@ -1389,6 +1457,7 @@ internal class Reanimation
 				TRect theDestRect = new TRect(theX, theY, theWidth, theHeight);
 				g.DrawImage(theImage, theDestRect, theSrcRect);
 			}
+
 			g.SetDrawMode(drawMode);
 			g.SetClipRect(ref theRect);
 		}
@@ -1404,6 +1473,7 @@ internal class Reanimation
 		{
 			return this;
 		}
+
 		for (int i = 0; i < mDefinition.mTrackCount; i++)
 		{
 			ReanimatorTrackInstance reanimatorTrackInstance = mTrackInstances[i];
@@ -1417,6 +1487,7 @@ internal class Reanimation
 				}
 			}
 		}
+
 		return null;
 	}
 }

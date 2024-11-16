@@ -14,11 +14,11 @@ public struct SexyColor
 	{
 		get
 		{
-			return ((Color)(ref Color)).R;
+			return Color.R;
 		}
 		set
 		{
-			((Color)(ref Color)).R = (byte)value;
+			Color.R = (byte)value;
 		}
 	}
 
@@ -26,11 +26,11 @@ public struct SexyColor
 	{
 		get
 		{
-			return ((Color)(ref Color)).G;
+			return Color.G;
 		}
 		set
 		{
-			((Color)(ref Color)).G = (byte)value;
+			Color.G = (byte)value;
 		}
 	}
 
@@ -38,11 +38,11 @@ public struct SexyColor
 	{
 		get
 		{
-			return ((Color)(ref Color)).B;
+			return Color.B;
 		}
 		set
 		{
-			((Color)(ref Color)).B = (byte)value;
+			Color.B = (byte)value;
 		}
 	}
 
@@ -50,7 +50,7 @@ public struct SexyColor
 	{
 		get
 		{
-			return ((Color)(ref Color)).A;
+			return Color.A;
 		}
 		set
 		{
@@ -59,7 +59,7 @@ public struct SexyColor
 			//IL_0016: Unknown result type (might be due to invalid IL or missing references)
 			float num = (float)value / 255f;
 			Color *= num;
-			((Color)(ref Color)).A = (byte)value;
+			Color.A = (byte)value;
 		}
 	}
 
@@ -69,11 +69,11 @@ public struct SexyColor
 
 	public int this[int theIdx] => theIdx switch
 	{
-		0 => ((Color)(ref Color)).R, 
-		1 => ((Color)(ref Color)).G, 
-		2 => ((Color)(ref Color)).B, 
-		3 => ((Color)(ref Color)).A, 
-		_ => 0, 
+		0 => Color.R,
+		1 => Color.G,
+		2 => Color.B,
+		3 => Color.A,
+		_ => 0,
 	};
 
 	public static SexyColor Premultiply(SexyColor col)
@@ -99,9 +99,7 @@ public struct SexyColor
 	}
 
 	public SexyColor(int theRed, int theGreen, int theBlue, int theAlpha)
-		: this(theRed, theGreen, theBlue, theAlpha, premultiply: true)
-	{
-	}
+		: this(theRed, theGreen, theBlue, theAlpha, premultiply: true) { }
 
 	public SexyColor(int theRed, int theGreen, int theBlue, int theAlpha, bool premultiply)
 	{
@@ -114,7 +112,7 @@ public struct SexyColor
 		if (premultiply)
 		{
 			Color = Color.Multiply(Color, (float)theAlpha / 255f);
-			((Color)(ref Color)).A = (byte)theAlpha;
+			Color.A = (byte)theAlpha;
 		}
 	}
 
@@ -152,17 +150,18 @@ public struct SexyColor
 		{
 			return Color == ((SexyColor)obj).Color;
 		}
+
 		return false;
 	}
 
 	public override int GetHashCode()
 	{
-		return ((object)(Color)(ref Color)).GetHashCode();
+		return Color.GetHashCode();
 	}
 
 	public override string ToString()
 	{
-		return ((object)(Color)(ref Color)).ToString();
+		return Color.ToString();
 	}
 
 	public static implicit operator SexyColor(Color color)

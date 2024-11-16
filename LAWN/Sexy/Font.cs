@@ -470,7 +470,7 @@ internal class Font
 			return;
 		}
 		Vector2 val = default(Vector2);
-		((Vector2)(ref val))._002Ector((float)theX, (float)theY);
+		val = new((float)theX, (float)theY);
 		Vector2 val2 = val + mOffsets[layer] * mScaleX * FrameworkConstants.Font_Scale;
 		if (!string.IsNullOrEmpty(theString) && mCharOffsets.ContainsKey(theString[0]))
 		{
@@ -535,8 +535,7 @@ internal class Font
 			return;
 		}
 		g.EndDrawImageTransformed();
-		Vector2 val = default(Vector2);
-		((Vector2)(ref val))._002Ector((float)theX, (float)theY);
+		Vector2 val = new((float)theX, (float)theY);
 		for (int i = 0; i < mFonts.Count; i++)
 		{
 			if (!enabledLayers[i])

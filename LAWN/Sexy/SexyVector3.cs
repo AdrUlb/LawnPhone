@@ -66,11 +66,8 @@ internal struct SexyVector3
 
 	public SexyVector3 Cross(SexyVector3 v)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 theVector = default(Vector3);
-		Vector3.Cross(ref mVector, ref v.mVector, ref theVector);
-		return new SexyVector3(theVector);
+		Vector3.Cross(ref mVector, ref v.mVector, out var theVector);
+		return new(theVector);
 	}
 
 	public static SexyVector3 operator +(SexyVector3 lhs, SexyVector3 rhs)
@@ -112,12 +109,12 @@ internal struct SexyVector3
 	public SexyVector3 Normalize()
 	{
 		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		((Vector3)(ref mVector)).Normalize();
+		mVector.Normalize();
 		return new SexyVector3(mVector);
 	}
 
 	public override string ToString()
 	{
-		return ((object)(Vector3)(ref mVector)).ToString();
+		return mVector.ToString();
 	}
 }

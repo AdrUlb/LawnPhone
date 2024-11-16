@@ -368,15 +368,14 @@ internal class ZombiePileWidget : Widget, ButtonListener
 		_ = Constants.BOARD_HEIGHT;
 		int num = 255;
 		g.SetColorizeImages(colorizeImages: true);
-		Color color = default(Color);
-		((Color)(ref color))._002Ector(255, 255, 255, num);
+		Color color = new Color(255, 255, 255, num);
 		g.SetColor(color);
 		int mTransY = g.mTransY;
 		g.mTransY = (int)((float)mTransY * 0.2f);
 		for (int i = 0; i < stars.Length; i++)
 		{
 			g.SetScale(stars[i].size);
-			((Color)(ref color)).A = (byte)(200 + rand.Next(55));
+			color.A = (byte)(200 + rand.Next(55));
 			g.SetColor(color);
 			g.DrawImageCel(AtlasResources.IMAGE_ICE_SPARKLES, stars[i].pos.X, stars[i].pos.Y, stars[i].cel, 0);
 		}
@@ -462,36 +461,8 @@ internal class ZombiePileWidget : Widget, ButtonListener
 
 	public void DrawPileObjects(Graphics g)
 	{
-		//IL_0302: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0307: Unknown result type (might be due to invalid IL or missing references)
-		//IL_034a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_034f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0354: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0359: Unknown result type (might be due to invalid IL or missing references)
-		//IL_035e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_043b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_043d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0447: Unknown result type (might be due to invalid IL or missing references)
-		//IL_044c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0458: Unknown result type (might be due to invalid IL or missing references)
-		//IL_045d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0467: Unknown result type (might be due to invalid IL or missing references)
-		//IL_046c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0471: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0473: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0478: Unknown result type (might be due to invalid IL or missing references)
-		//IL_047d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0482: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0484: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0489: Unknown result type (might be due to invalid IL or missing references)
-		//IL_048e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04ab: Unknown result type (might be due to invalid IL or missing references)
 		int mTransY = g.mTransY;
 		g.mTransY = (int)((float)mTransY * 0.4f);
-		Vector3 val = default(Vector3);
-		Vector3 val2 = default(Vector3);
 		for (int i = 0; i < gPileObjects.Length; i++)
 		{
 			ZombiePileObject zombiePileObject = gPileObjects[i];
@@ -552,8 +523,8 @@ internal class ZombiePileWidget : Widget, ButtonListener
 					blackHoleVerts[1].Position.Y = (float)(-Resources.IMAGE_BLACKHOLE.mHeight) / 4f - (float)num;
 					blackHoleVerts[2].Position.Y = (float)Resources.IMAGE_BLACKHOLE.mHeight / 4f - (float)num;
 					blackHoleVerts[3].Position.Y = (float)Resources.IMAGE_BLACKHOLE.mHeight / 4f - (float)num;
-					((Vector3)(ref val))._002Ector(0f, (float)num, 0f);
-					((Vector3)(ref val2))._002Ector(-60f, 80f, 0f);
+					Vector3 val = new Vector3(0f, (float)num, 0f);
+					Vector3 val2 = new Vector3(-60f, 80f, 0f);
 					identity = Matrix.CreateTranslation(val) * Matrix.CreateScale(4f) * Matrix.CreateRotationZ(zombiePileObject.mCounter) * Matrix.CreateRotationX(-0.85f) * Matrix.CreateTranslation(-val) * Matrix.CreateTranslation(val2);
 					g.DrawImageWithBasicEffect(Resources.IMAGE_BLACKHOLE, blackHoleVerts, blackHoleIndices, identity, blackHoleView, blackHoleProjection);
 					break;

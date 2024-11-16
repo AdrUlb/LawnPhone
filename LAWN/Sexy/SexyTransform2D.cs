@@ -58,7 +58,7 @@ public struct SexyTransform2D
 			Initiliase();
 		}
 		Matrix val = Matrix.CreateTranslation(tx, ty, 0f);
-		Matrix.Multiply(ref mMatrix, ref val, ref mMatrix);
+		Matrix.Multiply(ref mMatrix, ref val, out mMatrix);
 	}
 
 	public void RotateRad(float rot)
@@ -70,7 +70,7 @@ public struct SexyTransform2D
 			Initiliase();
 		}
 		Matrix val = Matrix.CreateRotationZ(rot);
-		Matrix.Multiply(ref mMatrix, ref val, ref mMatrix);
+		Matrix.Multiply(ref mMatrix, ref val, out mMatrix);
 	}
 
 	public void RotateDeg(float rot)
@@ -91,7 +91,7 @@ public struct SexyTransform2D
 			Initiliase();
 		}
 		Matrix val = Matrix.CreateScale(sx, sy, 1f);
-		Matrix.Multiply(ref mMatrix, ref val, ref mMatrix);
+		Matrix.Multiply(ref mMatrix, ref val, out mMatrix);
 	}
 
 	public static bool operator ==(SexyTransform2D a, SexyTransform2D b)
@@ -110,7 +110,7 @@ public struct SexyTransform2D
 
 	public override int GetHashCode()
 	{
-		return ((object)(Matrix)(ref mMatrix)).GetHashCode();
+		return mMatrix.GetHashCode();
 	}
 
 	public override bool Equals(object obj)
@@ -130,7 +130,7 @@ public struct SexyTransform2D
 			transform.Initiliase();
 		}
 		Vector2 result = default(Vector2);
-		Vector2.Transform(ref v, ref transform.mMatrix, ref result);
+		Vector2.Transform(ref v, ref transform.mMatrix, out result);
 		return result;
 	}
 
@@ -152,7 +152,7 @@ public struct SexyTransform2D
 			b.Initiliase();
 		}
 		SexyTransform2D result = new SexyTransform2D(loadIdentity: true);
-		Matrix.Multiply(ref a.mMatrix, ref b.mMatrix, ref result.mMatrix);
+		Matrix.Multiply(ref a.mMatrix, ref b.mMatrix, out result.mMatrix);
 		return result;
 	}
 }
